@@ -10,15 +10,15 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.camerasecuritysystem.databinding.ActivityMainBinding
 import com.example.camerasecuritysystem.databinding.FragmentFirstBinding
 
 class MainActivity : AppCompatActivity() {
 
     private var _binding : ActivityMainBinding? = null
-
     private val binding get() = _binding!!
-
 
     private lateinit var navController: NavController
     private lateinit var drawerLayout: DrawerLayout
@@ -26,12 +26,19 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var listener : NavController.OnDestinationChangedListener
 
+    private var layoutManager: RecyclerView.LayoutManager? = null
+    private var adapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.layoutManager = layoutManager
 
+        adapter = RecyclerAdapter()
+        binding.recyclerView.adapter = adapter
 
         listener = NavController.OnDestinationChangedListener{ controller, destination, arguments ->
             if(destination.id == R.id.firstFragment){
