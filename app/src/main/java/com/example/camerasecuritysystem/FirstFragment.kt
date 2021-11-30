@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.RecyclerView
 import com.example.camerasecuritysystem.databinding.FragmentFirstBinding
 
 class FirstFragment : Fragment() {
@@ -32,7 +33,7 @@ class FirstFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        binding.textView1.setOnClickListener { Navigation.findNavController(binding.root).navigate(R.id.action_firstFragment_to_secondFragment) }
+
 
     }
 }
