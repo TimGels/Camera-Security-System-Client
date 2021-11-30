@@ -1,8 +1,8 @@
 package com.example.camerasecuritysystem
 
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -13,7 +13,6 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.camerasecuritysystem.databinding.ActivityMainBinding
-import com.example.camerasecuritysystem.databinding.FragmentFirstBinding
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,8 +36,7 @@ class MainActivity : AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
 
-        adapter = RecyclerAdapter()
-        binding.recyclerView.adapter = adapter
+
 
         listener = NavController.OnDestinationChangedListener{ controller, destination, arguments ->
             if(destination.id == R.id.firstFragment){
@@ -68,6 +66,9 @@ class MainActivity : AppCompatActivity() {
 
         appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        adapter = RecyclerAdapter()
+        binding.recyclerView.adapter = adapter
     }
 
     override fun onSupportNavigateUp(): Boolean {
