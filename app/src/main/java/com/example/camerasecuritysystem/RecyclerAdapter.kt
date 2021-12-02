@@ -14,8 +14,8 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
     private var titles = arrayOf("Dashcam", "IP Camera", "Motion Camera")
     private var images = intArrayOf(
         R.drawable.dashcam_thumbnail,
-        R.drawable.dashcam_thumbnail,
-        R.drawable.dashcam_thumbnail
+        R.drawable.ip_camera_thumbnail,
+        R.drawable.motion_camera_thumbnail
     )
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerAdapter.ViewHolder {
@@ -40,6 +40,8 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
             itemImage = itemView.findViewById(R.id.item_image)
             itemTitle = itemView.findViewById(R.id.item_title)
 
+
+
             itemView.setOnClickListener {
 
                 val intent: Intent
@@ -49,7 +51,6 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
                         intent = Intent(itemView.context, CameraActivity::class.java)
                         intent.putExtra("modus", CameraMode.DASHCAM)
                         itemView.context.startActivity(intent)
-                        makeText(itemView.context, adapterPosition.toString(), LENGTH_SHORT).show()
                     }
                     1 -> {
                         intent = Intent(itemView.context, CameraActivity::class.java)
