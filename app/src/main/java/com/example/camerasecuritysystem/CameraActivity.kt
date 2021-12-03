@@ -59,7 +59,7 @@ class CameraActivity : AppCompatActivity() {
             CameraMode.DASHCAM ->{
                 val transaction = supportFragmentManager.beginTransaction()
 
-                transaction.add(R.id.fragmentContainerView, DashcamFragment(this!!), "DashcamFragment").commitAllowingStateLoss()
+                transaction.add(R.id.fragmentContainerView, DashcamFragment(), "DashcamFragment").commitAllowingStateLoss()
             }
         }
     }
