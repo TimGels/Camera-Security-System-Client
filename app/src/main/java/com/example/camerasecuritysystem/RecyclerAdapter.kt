@@ -9,6 +9,10 @@ import android.widget.TextView
 import android.widget.Toast.*
 import androidx.recyclerview.widget.RecyclerView
 
+import android.widget.LinearLayout
+import kotlin.math.absoluteValue
+
+
 class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
     private var titles = arrayOf("Dashcam", "IP Camera", "Motion Camera")
@@ -39,8 +43,6 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         init {
             itemImage = itemView.findViewById(R.id.item_image)
             itemTitle = itemView.findViewById(R.id.item_title)
-
-
 
             itemView.setOnClickListener {
 
