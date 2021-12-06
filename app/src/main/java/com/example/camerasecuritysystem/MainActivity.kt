@@ -36,12 +36,12 @@ class MainActivity : AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
 
-
+        
 
         listener = NavController.OnDestinationChangedListener{ controller, destination, arguments ->
-            if(destination.id == R.id.firstFragment){
+            if(destination.id == R.id.homeFragment){
                 supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(R.color.design_default_color_primary_dark))))
-            }else if(destination.id == R.id.secondFragment){
+            }else if(destination.id == R.id.settingsFragment){
                 supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(R.color.teal_700))))
             }
 
