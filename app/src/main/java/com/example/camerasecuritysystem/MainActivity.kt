@@ -13,6 +13,16 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.camerasecuritysystem.databinding.ActivityMainBinding
+import com.google.android.material.navigation.NavigationView
+import android.content.Intent
+import android.util.Log
+import android.view.MenuItem
+
+
+import androidx.annotation.NonNull
+
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         listener = NavController.OnDestinationChangedListener{ controller, destination, arguments ->
             if(destination.id == R.id.homeFragment){
                 supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(R.color.design_default_color_primary_dark))))
-            }else if(destination.id == R.id.settingsFragment){
+            }else if(destination.id == R.id.settingsActivity){
                 supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(R.color.teal_700))))
             }
 
@@ -63,6 +73,21 @@ class MainActivity : AppCompatActivity() {
         navController = findNavController(R.id.fragmentContainerView)
         drawerLayout = binding.drawerLayout
         binding.navigationView.setupWithNavController(navController)
+
+        binding.navigationView.setNavigationItemSelectedListener { menuItem ->
+            val id: Int = menuItem.itemId
+            if (id == R.id.settingsActivity) {
+                val newIntent = Intent(applicationContext, SettingsActivity::class.java)
+                applicationContext.startActivity(newIntent)
+
+
+            }
+            else{
+                Log.e("TAG:", "$id")
+            }
+
+            true
+        }
 
         appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
