@@ -13,6 +13,8 @@ class SettingsActivity : AppCompatActivity(), ConnectDialog.ConnectDialogListene
 
     private var binding : SettingsActivityBinding? = null
 
+    private var keyStore = KeyStore("pwd")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
@@ -38,7 +40,10 @@ class SettingsActivity : AppCompatActivity(), ConnectDialog.ConnectDialogListene
 
     override fun applyTexts(username: String?, password: String?) {
         //TODO hier kan er iets met de ingevoerde data gedaan worden
-        Log.e("Texts", "name: $username and pwd: $password")
+        if (password != null) {
+            val pair = keyStore.encryptData(password)
+            Log.e("ENCRYPTED" , pair.second.toString(Charsets.UTF_8))
+        }
     }
 
 //    class SettingsFragment : PreferenceFragmentCompat() {
