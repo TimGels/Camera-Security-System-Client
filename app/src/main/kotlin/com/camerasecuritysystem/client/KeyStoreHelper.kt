@@ -23,7 +23,7 @@ class KeyStoreHelper(private val keystoreAlias: String) {
 
     init {
         if (getKey() == null) {
-            Log.e("KEY" , "key is null")
+            Log.e("KEY", "key is null")
             generateKey()
         }
     }
@@ -43,9 +43,14 @@ class KeyStoreHelper(private val keystoreAlias: String) {
         val keyStore: KeyStore = KeyStore.getInstance(keyProvider)
         keyStore.load(null)
 
-        val secretKeyEntry: KeyStore.SecretKeyEntry =
-            keyStore.getEntry(keystoreAlias, null) as KeyStore.SecretKeyEntry
-        return secretKeyEntry.secretKey
+        if (keyStore.getEntry(keystoreAlias, null) == null) {
+            return null
+        }
+        else {
+            val secretKeyEntry: KeyStore.SecretKeyEntry =
+                keyStore.getEntry(keystoreAlias, null) as KeyStore.SecretKeyEntry
+            return secretKeyEntry.secretKey
+        }
     }
 
     /**
