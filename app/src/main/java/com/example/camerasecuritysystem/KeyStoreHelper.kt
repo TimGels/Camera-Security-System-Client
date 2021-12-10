@@ -2,17 +2,19 @@ package com.example.camerasecuritysystem
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import android.util.Log
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 
-class KeyStore(private val keystoreAlias: String) {
+class KeyStoreHelper(private val keystoreAlias: String) {
 
     private val keyProvider = "AndroidKeyStore"
 
-    private val keyGenerator: KeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, keyProvider)
+    private val keyGenerator: KeyGenerator =
+        KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, keyProvider)
     private val keyGenParameterSpec = KeyGenParameterSpec.Builder(
         keystoreAlias,
         KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
@@ -20,15 +22,23 @@ class KeyStore(private val keystoreAlias: String) {
         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE).build()
 
     init {
-        generateKey()
+        if (getKey() == null) {
+            Log.e("KEY" , "key is null")
+            generateKey()
+        }
     }
 
-
+    /**
+     * Generate a new key
+     */
     private fun generateKey() {
         keyGenerator.init(keyGenParameterSpec)
         keyGenerator.generateKey()
     }
 
+    /**
+     * Return existing key. If not exists, it returns null
+     */
     private fun getKey(): SecretKey? {
         val keyStore: KeyStore = KeyStore.getInstance(keyProvider)
         keyStore.load(null)
@@ -38,6 +48,9 @@ class KeyStore(private val keystoreAlias: String) {
         return secretKeyEntry.secretKey
     }
 
+    /**
+     * Encrypt a string
+     */
     fun encryptData(data: String): Pair<ByteArray, ByteArray> {
         val cipher = Cipher.getInstance("AES/CBC/NoPadding")
 
@@ -49,16 +62,20 @@ class KeyStore(private val keystoreAlias: String) {
         cipher.init(Cipher.ENCRYPT_MODE, getKey())
 
         val ivBytes: ByteArray = cipher.iv
-        val encryptedBytes: ByteArray = cipher.doFinal(temp.toByteArray(Charsets.UTF_8))
+        val encryptedBytes: ByteArray = cipher.doFinal(temp.toByteArray(Charsets.ISO_8859_1))
 
         return Pair(ivBytes, encryptedBytes)
     }
 
-    fun decryptData(ivBytes : ByteArray, data: ByteArray): String{
+    /**
+     * Decrypt a string
+     */
+    fun decryptData(ivBytes: ByteArray, data: ByteArray): String {
         val cipher = Cipher.getInstance("AES/CBC/NoPadding")
+
         val spec = IvParameterSpec(ivBytes)
 
         cipher.init(Cipher.DECRYPT_MODE, getKey(), spec)
-        return  cipher.doFinal(data).toString(Charsets.UTF_8).trim()
+        return cipher.doFinal(data).toString(Charsets.ISO_8859_1).trim()
     }
 }
