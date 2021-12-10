@@ -111,6 +111,6 @@ class ConnectDialog : AppCompatDialogFragment() {
     }
 
     interface ConnectDialogListener {
-        fun applyTexts(username: String?, port: String?, ipAddress: String?, password: String?)
+        fun applyTexts(cameraID: String?, port: String?, ipAddress: String?, password: String?)
     }
 }

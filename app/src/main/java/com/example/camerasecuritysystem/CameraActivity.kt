@@ -55,6 +55,7 @@ class CameraActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
+        //TODO Maak hier een if van
         when(mode){
             CameraMode.DASHCAM ->{
                 val transaction = supportFragmentManager.beginTransaction()

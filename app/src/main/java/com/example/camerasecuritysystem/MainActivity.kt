@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         
 
-        listener = NavController.OnDestinationChangedListener{ controller, destination, arguments ->
+        listener = NavController.OnDestinationChangedListener{ _, destination, _ ->
             if(destination.id == R.id.homeFragment){
                 supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(R.color.design_default_color_primary_dark))))
             }else if(destination.id == R.id.settingsActivity){
