@@ -1,12 +1,11 @@
-package com.example.camerasecuritysystem
+package com.camerasecuritysystem.client
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.camerasecuritysystem.databinding.ActivityCameraBinding
-
+import com.camerasecuritysystem.client.databinding.ActivityCameraBinding
 
 class CameraActivity : AppCompatActivity() {
 

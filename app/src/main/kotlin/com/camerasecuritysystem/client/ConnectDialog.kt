@@ -1,4 +1,4 @@
-package com.example.camerasecuritysystem
+package com.camerasecuritysystem.client
 
 import android.app.Dialog
 import android.content.Context
@@ -31,7 +31,7 @@ class ConnectDialog : AppCompatDialogFragment() {
 
         //Get access to all shared preferences
         sharedPreferences = requireContext().getSharedPreferences(
-            "com.example.camerasecuritysystem",
+            "com.camerasecuritysystem.client",
             Context.MODE_PRIVATE)
 
         //Assign the preferences to variables

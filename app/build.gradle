@@ -8,7 +8,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.example.camerasecuritysystem"
+        applicationId "com.camerasecuritysystem.client"
         minSdk 26
         targetSdk 26
         versionCode 1

@@ -1,4 +1,4 @@
-package com.example.camerasecuritysystem
+package com.camerasecuritysystem.client
 
 enum class CameraMode {
     MOTIONCAMERA,

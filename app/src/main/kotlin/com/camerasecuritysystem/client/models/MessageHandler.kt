@@ -1,4 +1,4 @@
-package com.example.camerasecuritysystem.models
+package com.camerasecuritysystem.client.models
 
 class MessageHandler {
 
