@@ -11,7 +11,7 @@ import javax.crypto.spec.IvParameterSpec
 
 class KeyStoreHelper(private val keystoreAlias: String) {
 
-    private val keyProvider = "AndroidKeyStore"
+    private final val keyProvider = "AndroidKeyStore"
 
     private val keyGenerator: KeyGenerator =
         KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, keyProvider)
