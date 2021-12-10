@@ -1,4 +1,4 @@
-package com.example.camerasecuritysystem
+package com.camerasecuritysystem.client
 
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
@@ -14,8 +14,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.camerasecuritysystem.databinding.ActivityMainBinding
-import com.example.camerasecuritysystem.models.ServerConnection
+import com.camerasecuritysystem.client.databinding.ActivityMainBinding
+import com.camerasecuritysystem.client.models.ServerConnection
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -57,9 +57,13 @@ class MainActivity : AppCompatActivity() {
 
         listener = NavController.OnDestinationChangedListener{ _, destination, _ ->
             if (destination.id == R.id.homeFragment) {
-                supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(R.color.design_default_color_primary_dark))))
+                supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(
+                    R.color.design_default_color_primary_dark
+                ))))
             } else if (destination.id == R.id.settingsActivity) {
-                supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(R.color.teal_700))))
+                supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(
+                    R.color.teal_700
+                ))))
             }
         }
     }
@@ -85,8 +89,6 @@ class MainActivity : AppCompatActivity() {
             if (id == R.id.settingsActivity) {
                 val newIntent = Intent(applicationContext, SettingsActivity::class.java)
                 applicationContext.startActivity(newIntent)
-
-
             }
             else{
                 Log.e("TAG:", "$id")

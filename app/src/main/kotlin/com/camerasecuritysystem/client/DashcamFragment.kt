@@ -1,6 +1,5 @@
-package com.example.camerasecuritysystem
+package com.camerasecuritysystem.client
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,11 +13,9 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.example.camerasecuritysystem.databinding.FragmentDashcamBinding
-
+import com.camerasecuritysystem.client.databinding.FragmentDashcamBinding
 
 class DashcamFragment() : Fragment(), CameraXConfig.Provider {
-
 
     private var binding: FragmentDashcamBinding? = null
     private var TAG = "DEBUG TEXT"

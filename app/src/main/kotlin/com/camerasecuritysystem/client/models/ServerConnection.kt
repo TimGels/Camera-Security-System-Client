@@ -1,4 +1,4 @@
-package com.example.camerasecuritysystem.models
+package com.camerasecuritysystem.client.models
 
 import android.util.Log
 import io.ktor.client.HttpClient
@@ -15,7 +15,7 @@ import java.nio.channels.ClosedChannelException
 
 class ServerConnection {
 
-    private final val tag: String = "initializeConnection"
+    private val tag: String = "initializeConnection"
 
     private var port: Int = 5042
     private var hostname: String = "192.168.1.147"

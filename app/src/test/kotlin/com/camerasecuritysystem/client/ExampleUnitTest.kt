@@ -1,4 +1,4 @@
-package com.example.camerasecuritysystem
+package com.camerasecuritysystem.client
 
 import org.junit.Test
 

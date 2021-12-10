@@ -1,4 +1,4 @@
-package com.example.camerasecuritysystem
+package com.camerasecuritysystem.client
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -9,10 +9,6 @@ import android.widget.TextView
 import android.widget.Toast.*
 import androidx.recyclerview.widget.RecyclerView
 
-import android.widget.LinearLayout
-import kotlin.math.absoluteValue
-
-
 class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
     private var titles = arrayOf("Dashcam", "IP Camera", "Motion Camera")
@@ -22,12 +18,12 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         R.drawable.motion_camera_thumbnail
     )
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.card_layout, parent, false)
         return ViewHolder(v)
     }
 
-    override fun onBindViewHolder(holder: RecyclerAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemTitle.text = titles[position]
         holder.itemImage.setImageResource(images[position])
     }

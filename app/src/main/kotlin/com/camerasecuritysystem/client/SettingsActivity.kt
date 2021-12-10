@@ -1,4 +1,4 @@
-package com.example.camerasecuritysystem
+package com.camerasecuritysystem.client
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -6,11 +6,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
-import com.example.camerasecuritysystem.databinding.SettingsActivityBinding
+import com.camerasecuritysystem.client.databinding.SettingsActivityBinding
 
-
-class SettingsActivity : AppCompatActivity(), ConnectDialog.ConnectDialogListener {
-
+class SettingsActivity : AppCompatActivity(),
+    ConnectDialog.ConnectDialogListener {
 
     private var binding: SettingsActivityBinding? = null
 
@@ -27,7 +26,7 @@ class SettingsActivity : AppCompatActivity(), ConnectDialog.ConnectDialogListene
         binding = SettingsActivityBinding.inflate(layoutInflater)
 
         sharedPreferences =
-            this.getSharedPreferences("com.example.camerasecuritysystem", Context.MODE_PRIVATE)
+            this.getSharedPreferences("com.camerasecuritysystem.client", Context.MODE_PRIVATE)
 
         pwdIV = sharedPreferences.getString("pwdIVByte", "")
 

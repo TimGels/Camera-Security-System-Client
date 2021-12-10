@@ -1,4 +1,4 @@
-package com.example.camerasecuritysystem
+package com.camerasecuritysystem.client
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
