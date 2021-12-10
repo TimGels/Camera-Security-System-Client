@@ -1,12 +1,12 @@
 package com.example.camerasecuritysystem.models
 
 import android.util.Log
-import com.example.camerasecuritysystem.models.Message
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.websocket.*
 import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
+import io.ktor.network.sockets.*
 import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -14,6 +14,8 @@ import kotlinx.serialization.json.Json
 import java.nio.channels.ClosedChannelException
 
 class ServerConnection {
+
+    private final val tag: String = "initializeConnection"
 
     private var port: Int = 5042
     private var hostname: String = "192.168.1.147"
@@ -73,6 +75,10 @@ class ServerConnection {
             client.close()
 
         } catch (ex: ClosedSendChannelException) {
+            Log.e(tag, ex.message.toString())
+        } catch (ex: ConnectTimeoutException) {
+            Log.e(tag, ex.message.toString())
+        } finally {
             webSocketSession = null
         }
     }
