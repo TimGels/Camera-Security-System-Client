@@ -1,7 +1,9 @@
 package com.example.camerasecuritysystem
 
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -13,16 +15,9 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.camerasecuritysystem.databinding.ActivityMainBinding
-import com.google.android.material.navigation.NavigationView
-import android.content.Intent
-import android.util.Log
-import android.view.MenuItem
-
-
-import androidx.annotation.NonNull
-
-
-
+import com.example.camerasecuritysystem.models.ServerConnection
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>? = null
 
+    private var serverConnection: ServerConnection? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -46,15 +43,24 @@ class MainActivity : AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
 
-        
+        // TODO: get from private preferences
+        val isLoggedIn = true
+        val hasConnection = true
+        val port = 5042
+        val hostname = "192.168.1.147"
+        serverConnection = ServerConnection(port, hostname)
+        if (isLoggedIn && hasConnection) {
+            GlobalScope.launch {
+                serverConnection!!.initializeConnection()
+            }
+        }
 
         listener = NavController.OnDestinationChangedListener{ _, destination, _ ->
-            if(destination.id == R.id.homeFragment){
+            if (destination.id == R.id.homeFragment) {
                 supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(R.color.design_default_color_primary_dark))))
-            }else if(destination.id == R.id.settingsActivity){
+            } else if (destination.id == R.id.settingsActivity) {
                 supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(R.color.teal_700))))
             }
-
         }
     }
 
