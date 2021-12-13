@@ -1,5 +1,6 @@
 package com.camerasecuritysystem.client
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -21,14 +22,14 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private var _binding : ActivityMainBinding? = null
+    private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var navController: NavController
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var appBarConfiguration: AppBarConfiguration
 
-    private lateinit var listener : NavController.OnDestinationChangedListener
+    private lateinit var listener: NavController.OnDestinationChangedListener
 
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>? = null
@@ -44,26 +45,40 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.layoutManager = layoutManager
 
         // TODO: get from private preferences
+        var sharedPreferences =
+            this.getSharedPreferences("com.camerasecuritysystem.client", Context.MODE_PRIVATE)
+
         val isLoggedIn = true
         val hasConnection = true
-        val port = 5042
-        val hostname = "192.168.1.147"
-        serverConnection = ServerConnection(port, hostname)
-        if (isLoggedIn && hasConnection) {
-            GlobalScope.launch {
-                serverConnection!!.initializeConnection()
+        val port = sharedPreferences.getString(resources.getString(R.string.port), null)
+        val hostname = sharedPreferences.getString(resources.getString(R.string.ip_address), null)
+
+        if (port != null && hostname != null) {
+            serverConnection = ServerConnection(port!!.toInt(), hostname!!)
+            if (isLoggedIn && hasConnection) {
+                GlobalScope.launch {
+                    serverConnection!!.initializeConnection()
+                }
             }
         }
 
-        listener = NavController.OnDestinationChangedListener{ _, destination, _ ->
+        listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.homeFragment) {
-                supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(
-                    R.color.design_default_color_primary_dark
-                ))))
+                supportActionBar?.setBackgroundDrawable(
+                    (ColorDrawable(
+                        getColor(
+                            R.color.design_default_color_primary_dark
+                        )
+                    ))
+                )
             } else if (destination.id == R.id.settingsActivity) {
-                supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(
-                    R.color.teal_700
-                ))))
+                supportActionBar?.setBackgroundDrawable(
+                    (ColorDrawable(
+                        getColor(
+                            R.color.teal_700
+                        )
+                    ))
+                )
             }
         }
     }
@@ -89,8 +104,7 @@ class MainActivity : AppCompatActivity() {
             if (id == R.id.settingsActivity) {
                 val newIntent = Intent(applicationContext, SettingsActivity::class.java)
                 applicationContext.startActivity(newIntent)
-            }
-            else{
+            } else {
                 Log.e("TAG:", "$id")
             }
 

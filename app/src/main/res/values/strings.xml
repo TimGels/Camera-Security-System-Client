@@ -4,15 +4,22 @@
     <string name="ip_camera">IP Camera</string>
     <string name="motion_camera">Motion Camera</string>
 
-    <!-- Sync Preferences -->
+    <!-- sharedPreferences -->
+    <string name="pwdIVByte">pwdIVByte</string>
+    <string name="encPwd">encPwd</string>
+    <string name="port">port</string>
+    <string name="ip_address">ip_address</string>
+    <string name="camera_id">camera_id</string>
 
-    <string name="camera_id">Camera ID</string>
-    <string name="port">Port</string>
-    <string name="ip_address">IP address</string>
-    <string name="password">Password</string>
+    <string name="camera_id_title">Camera ID</string>
+    <string name="port_title">Port</string>
+    <string name="ip_address_title">IP address</string>
+    <string name="password_title">Password</string>
 
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_main">Home</string>
     <string name="title_activity_camera">Camera</string>
+
+
 
 </resources>

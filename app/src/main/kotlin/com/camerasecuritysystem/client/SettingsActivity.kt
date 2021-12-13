@@ -28,7 +28,7 @@ class SettingsActivity : AppCompatActivity(),
         sharedPreferences =
             this.getSharedPreferences("com.camerasecuritysystem.client", Context.MODE_PRIVATE)
 
-        pwdIV = sharedPreferences.getString("pwdIVByte", "")
+        pwdIV = sharedPreferences.getString(resources.getString(R.string.pwdIVByte), "")
 
         val connectionSettings = findViewById<View>(R.id.textViewConnectionSettings)
         connectionSettings.setOnClickListener {
@@ -58,25 +58,25 @@ class SettingsActivity : AppCompatActivity(),
         if (password != null) {
             val pair = keyStore.encryptData(password)
 
-            sharedPreferences.edit().putString("pwdIVByte", pair.first.toString(Charsets.ISO_8859_1))
+            sharedPreferences.edit().putString(resources.getString(R.string.pwdIVByte), pair.first.toString(Charsets.ISO_8859_1))
                 .apply()
-            sharedPreferences.edit().putString("encPwd", pair.second.toString(Charsets.ISO_8859_1))
+            sharedPreferences.edit().putString(resources.getString(R.string.encPwd), pair.second.toString(Charsets.ISO_8859_1))
                 .apply()
         }
 
         //TODO Input validatie
         if (port != null) {
-            sharedPreferences.edit().putString("port", port).apply()
+            sharedPreferences.edit().putString(resources.getString(R.string.port), port).apply()
         }
 
         //TODO Input validatie
         if (ipAddress != null) {
-            sharedPreferences.edit().putString("ip_address", ipAddress).apply()
+            sharedPreferences.edit().putString(resources.getString(R.string.ip_address), ipAddress).apply()
         }
 
         //TODO Input validatie
         if (cameraID != null && cameraID != "") {
-            sharedPreferences.edit().putString("camera_id", cameraID).apply()
+            sharedPreferences.edit().putString(resources.getString(R.string.camera_id), cameraID).apply()
         }
     }
 
