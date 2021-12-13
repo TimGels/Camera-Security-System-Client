@@ -6,12 +6,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
-import com.camerasecuritysystem.client.databinding.SettingsActivityBinding
+import com.camerasecuritysystem.client.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity(),
     ConnectDialog.ConnectDialogListener {
 
-    private var binding: SettingsActivityBinding? = null
+    private var binding: ActivitySettingsBinding? = null
 
     private var keyStore = KeyStoreHelper("connectToServer")
 
@@ -20,20 +20,27 @@ class SettingsActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.settings_activity)
+        setContentView(R.layout.activity_settings)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding = SettingsActivityBinding.inflate(layoutInflater)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
 
         sharedPreferences =
             this.getSharedPreferences("com.camerasecuritysystem.client", Context.MODE_PRIVATE)
 
         pwdIV = sharedPreferences.getString("pwdIVByte", "")
 
-        val button = findViewById<View>(R.id.connectBtn) as Button
-        button.setOnClickListener {
+        val connectionSettings = findViewById<View>(R.id.textViewConnectionSettings)
+        connectionSettings.setOnClickListener {
             openDialog()
         }
+
+        val connectBtn = findViewById<View>(R.id.connectBtn) as Button
+        connectBtn.setOnClickListener {
+            //TODO maak een connectie aan
+        }
+
+
     }
 
     private fun openDialog() {
