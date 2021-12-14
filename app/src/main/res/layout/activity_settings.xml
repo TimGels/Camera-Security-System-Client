@@ -12,9 +12,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
         android:layout_weight="10"
         android:orientation="horizontal"
-        android:layout_gravity="center_horizontal"
 
         android:weightSum="10">
 
@@ -25,19 +25,19 @@
             android:layout_height="match_parent"
             android:layout_weight="8"
             android:gravity="center"
-            android:text="Tap to edit connection settings"
             android:scrollHorizontally="false"
+            android:text="Tap to edit connection settings"
 
             tools:layout_editor_absoluteX="0dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/connectBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:textColor="@color/black"
-            android:backgroundTint="@color/white"
-            android:text="Connect" />
+            android:backgroundTint="@color/design_default_color_primary"
+            android:text="Connect"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </LinearLayout>

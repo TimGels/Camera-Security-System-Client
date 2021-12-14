@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
 
+    lateinit var connectionLiveData: ConnectionLiveData
+
     private lateinit var navController: NavController
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -36,6 +38,7 @@ class MainActivity : AppCompatActivity() {
 
     private var serverConnection: ServerConnection? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -44,23 +47,18 @@ class MainActivity : AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
 
-        // TODO: get from private preferences
-        var sharedPreferences =
-            this.getSharedPreferences("com.camerasecuritysystem.client", Context.MODE_PRIVATE)
+        connectionLiveData = ConnectionLiveData(this)
+        connectionLiveData.observe(this, { isNetworkAvailable ->
+            Log.e("NETWORK", "Connected = $isNetworkAvailable")
 
-        val isLoggedIn = true
-        val hasConnection = true
-        val port = sharedPreferences.getString(resources.getString(R.string.port), null)
-        val hostname = sharedPreferences.getString(resources.getString(R.string.ip_address), null)
-
-        if (port != null && hostname != null) {
-            serverConnection = ServerConnection(port!!.toInt(), hostname!!)
-            if (isLoggedIn && hasConnection) {
+            if (isNetworkAvailable) {
                 GlobalScope.launch {
-                    serverConnection!!.initializeConnection()
+                    ServerConnection(this@MainActivity).connectIfPossible()
                 }
             }
-        }
+
+        })
+
 
         listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.homeFragment) {
