@@ -13,11 +13,16 @@
 
     <string name="title_activity_settings">SettingsActivity</string>
 
-
     <string name="capture">Capture</string>
     <string name="camera">Camera</string>
     <string name="stop">stop</string>
     <string name="Idle">Idle</string>
     <color name="txWhite">#FFFFFFFF</color>
 
+    <!-- Validation errors -->
+    <string name="err_not_empty">%1$s cannot be empty!</string>
+    <string name="err_must_be_number">%1$s must be a number!</string>
+    <string name="err_at_least">%1$s must be %2$d at minimum!</string>
+    <string name="err_at_most">%1$s must be %2$d as maximum!</string>
 </resources>
+s

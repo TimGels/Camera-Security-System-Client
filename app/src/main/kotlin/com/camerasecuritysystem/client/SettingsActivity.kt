@@ -46,31 +46,23 @@ class SettingsActivity : AppCompatActivity(),
         return false
     }
 
-    override fun applyTexts(cameraID: String?, port: String?, ipAddress: String?, password: String?) {
-        //TODO Input validatie
-        if (password != null) {
-            val pair = keyStore.encryptData(password)
+    override fun applyTexts(cameraID: String, port: String, ipAddress: String, password: String) {
 
-            sharedPreferences.edit().putString("pwdIVByte", pair.first.toString(Charsets.ISO_8859_1))
-                .apply()
-            sharedPreferences.edit().putString("encPwd", pair.second.toString(Charsets.ISO_8859_1))
-                .apply()
-        }
+        // Encrypt the password
+        val pair = keyStore.encryptData(password)
 
-        //TODO Input validatie
-        if (port != null) {
-            sharedPreferences.edit().putString("port", port).apply()
-        }
+        // Store the IV bytes encrypted and the password
+        sharedPreferences.edit()
+            .putString("pwdIVByte", pair.first.toString(Charsets.ISO_8859_1))
+            .apply()
+        sharedPreferences.edit()
+            .putString("encPwd", pair.second.toString(Charsets.ISO_8859_1))
+            .apply()
 
-        //TODO Input validatie
-        if (ipAddress != null) {
-            sharedPreferences.edit().putString("ip_address", ipAddress).apply()
-        }
+        sharedPreferences.edit().putString("port", port).apply()
 
-        //TODO Input validatie
-        if (cameraID != null && cameraID != "") {
-            sharedPreferences.edit().putString("camera_id", cameraID).apply()
-        }
+        sharedPreferences.edit().putString("ip_address", ipAddress).apply()
+
+        sharedPreferences.edit().putString("camera_id", cameraID).apply()
     }
-
 }
