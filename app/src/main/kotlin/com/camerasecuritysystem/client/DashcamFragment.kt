@@ -167,7 +167,7 @@ class DashcamFragment() : Fragment() {
         val videoOutput = FileOutputOptions.Builder(videoFile)
             .build()
 
-        // configure Recorder and Start recording to the mediaStoreOutput.
+        // configure Recorder and Start recording to the application data store.
         activeRecording =
             videoCapture.output.prepareRecording(requireActivity(), videoOutput)
                 .withEventListener(
