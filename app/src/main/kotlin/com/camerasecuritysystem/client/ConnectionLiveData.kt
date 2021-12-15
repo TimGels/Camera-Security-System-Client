@@ -17,7 +17,6 @@ import kotlinx.coroutines.withContext
 
 class ConnectionLiveData(context: Context) : LiveData<Boolean>() {
 
-
     val TAG = "C-Manager"
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
     private val cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -64,7 +63,6 @@ class ConnectionLiveData(context: Context) : LiveData<Boolean>() {
                 }
             }
         }
-
 
 
         /*

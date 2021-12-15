@@ -1,6 +1,5 @@
 package com.camerasecuritysystem.client
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -58,9 +57,9 @@ class SettingsActivity : AppCompatActivity(),
                     if (!connection.isConnected()){
                         connection.connectIfPossible(context)
 
-                        Log.e("Connection", "Verbinden mogelijk: ${connection.connectIfPossible(context)}")
+                        Log.e("Connection", "Connecting is possible: ${connection.connectIfPossible(context)}")
                     }else{
-                        Log.e("Connection", "Ik ben al verbonden")
+                        Log.e("Connection", "Already connected")
                     }
 
                 } catch (e: Exception) {
@@ -74,15 +73,12 @@ class SettingsActivity : AppCompatActivity(),
             Log.e("NETWORK", "Connected = $isNetworkAvailable")
             updateUI()
         })
-            updateUI()
-
-
+        updateUI()
     }
 
     private fun updateUI(){
 
         val isNetworkAvailable = connectionLiveData.value
-        Log.e("LiveData value", "$isNetworkAvailable")
 
         if (isNetworkAvailable == null || !isNetworkAvailable  ) {
             connectBtn.isClickable = false
@@ -90,17 +86,14 @@ class SettingsActivity : AppCompatActivity(),
             connectBtn.backgroundTintList =
                 getColorStateList(R.color.cardview_dark_background)
 
-            connectBtn.text = "NO Signal"
-            Log.e("Button", "Enabled = ${connectBtn.isEnabled}")
+            connectBtn.text = "No internet"
         }
-
-        if (isNetworkAvailable == true) {
+        else if (isNetworkAvailable == true) {
             connectBtn.isClickable = true
             connectBtn.isEnabled = true
             connectBtn.backgroundTintList =
                 getColorStateList(R.color.design_default_color_primary)
             connectBtn.text = "Connect"
-            Log.e("Button", "Enabled = ${connectBtn.isEnabled}")
         }
 
     }
@@ -115,12 +108,7 @@ class SettingsActivity : AppCompatActivity(),
         return false
     }
 
-    override fun applyTexts(
-        cameraID: String?,
-        port: String?,
-        ipAddress: String?,
-        password: String?
-    ) {
+    override fun applyTexts(cameraID: String?, port: String?, ipAddress: String?, password: String?) {
         //TODO Input validatie
         if (password != null) {
             val pair = keyStore.encryptData(password)

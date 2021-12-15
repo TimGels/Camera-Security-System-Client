@@ -18,11 +18,12 @@ import java.nio.channels.ClosedChannelException
 
 class ServerConnection {
 
-    companion object{
-        @Volatile private var INSTANCE : ServerConnection? = null
+    companion object {
+        @Volatile
+        private var INSTANCE: ServerConnection? = null
 
-        fun getInstance(): ServerConnection{
-            if (INSTANCE == null){
+        fun getInstance(): ServerConnection {
+            if (INSTANCE == null) {
                 INSTANCE = ServerConnection()
             }
             return INSTANCE!!
@@ -40,15 +41,14 @@ class ServerConnection {
     private var webSocketSession: DefaultClientWebSocketSession? = null
 
 
-
     private suspend fun initializeConnection(credentials: HashMap<String, String>) {
         try {
 
-            val cameraId : Int? = credentials["camera_id"]?.toInt()
+            val cameraId: Int? = credentials["camera_id"]?.toInt()
             val pwd = credentials["encPwd"]?.toByteArray(Charsets.ISO_8859_1)
 
             val pwdIVByte = credentials["pwdIVByte"]?.toByteArray(Charsets.ISO_8859_1)
-            val port : Int? = credentials["port"]?.toInt()
+            val port: Int? = credentials["port"]?.toInt()
             val hostname = credentials["ip_address"]
 
             client.ws(
@@ -80,17 +80,11 @@ class ServerConnection {
                             MessageHandler.handleMessage(serverMessage, getInstance()!!)
                         }
                     }
-
-                    Log.e("WEBSOCKET", "$webSocketSession")
-
-
                 } catch (ex: ClosedChannelException) {
-                    Log.e("taggg", "exception: channel closed!")
+                    Log.e("Channel", "exception: channel closed!")
                 }
-
                 webSocketSession = null
             }
-
             client.close()
 
         } catch (ex: ClosedSendChannelException) {
@@ -135,7 +129,6 @@ class ServerConnection {
         var sharedPreferences =
             context.getSharedPreferences("com.camerasecuritysystem.client", Context.MODE_PRIVATE)
 
-
         val camera_id =
             sharedPreferences.getString(context.resources.getString(R.string.camera_id), null)
         val pwd = sharedPreferences.getString(context.resources.getString(R.string.encPwd), null)
@@ -146,11 +139,8 @@ class ServerConnection {
             sharedPreferences.getString(context.resources.getString(R.string.ip_address), null)
 
         var credentials = arrayOf(camera_id, pwd, pwdIVByte, port, hostname)
-        if (credentials.contains(null)) {
-            return false
-        }
-        return true
 
+        return credentials.contains(null) == false
     }
 
     suspend fun connectIfPossible(context: Context) {
@@ -160,7 +150,7 @@ class ServerConnection {
         Log.e("Creds entered", "${credentialsEntered(context)}")
     }
 
-    private fun getCredentials(context : Context): HashMap<String, String>{
+    private fun getCredentials(context: Context): HashMap<String, String> {
         var sharedPreferences =
             context.getSharedPreferences("com.camerasecuritysystem.client", Context.MODE_PRIVATE)
 
@@ -173,7 +163,7 @@ class ServerConnection {
         val hostname =
             sharedPreferences.getString(context.resources.getString(R.string.ip_address), null)
 
-        val hashMap :HashMap<String, String> = HashMap()
+        val hashMap: HashMap<String, String> = HashMap()
 
         hashMap.put(context.resources.getString(R.string.camera_id), camera_id!!)
         hashMap.put(context.resources.getString(R.string.encPwd), pwd!!)
