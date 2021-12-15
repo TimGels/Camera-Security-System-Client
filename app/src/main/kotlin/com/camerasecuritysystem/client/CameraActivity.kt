@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.camerasecuritysystem.client.databinding.ActivityCameraBinding
+import com.camerasecuritysystem.client.models.CameraMode
 
 class CameraActivity : AppCompatActivity() {
 
