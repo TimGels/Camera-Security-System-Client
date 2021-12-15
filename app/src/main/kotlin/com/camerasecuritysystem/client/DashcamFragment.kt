@@ -23,7 +23,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class DashcamFragment() : Fragment() {
+class DashcamFragment : Fragment() {
 
     private var binding: FragmentDashcamBinding? = null
     private var TAG = "DEBUG TEXT"
@@ -36,10 +36,10 @@ class DashcamFragment() : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentDashcamBinding.inflate(inflater, container, false)
 
-        return binding!!.getRoot()
+        return binding!!.root
     }
 
     override fun onViewCreated(view: View, @Nullable savedInstanceState: Bundle?) {
@@ -57,17 +57,22 @@ class DashcamFragment() : Fragment() {
         }
     }
 
+    /**
+     * Initialize the UI components
+     */
     private fun initializeUI() {
+        enableUI(false)  // Our eventListener will turn on the Recording UI.
         // React to user touching the capture button
         binding?.captureButton?.apply {
             setOnClickListener {
                 if (!this@DashcamFragment::recordingState.isInitialized || recordingState is VideoRecordEvent.Finalize) {
-                    enableUI(false)  // Our eventListener will turn on the Recording UI.
+                    binding!!.captureButton.setImageResource(R.drawable.ic_stop)
                     startRecording()
                 } else {
                     when (recordingState) {
                         is VideoRecordEvent.Start -> {
                             activeRecording?.stop()
+                            binding!!.captureButton.setImageResource(R.drawable.ic_start)
                             stopRecording()
                         }
                         else -> {
@@ -83,6 +88,9 @@ class DashcamFragment() : Fragment() {
         }
     }
 
+    /**
+     * Stop the recording of the video
+     */
     private fun stopRecording() {
 
         val recording = activeRecording
@@ -148,7 +156,6 @@ class DashcamFragment() : Fragment() {
             }
 
         }, ContextCompat.getMainExecutor(requireContext()))
-        enableUI(true)
     }
 
     /**
@@ -158,7 +165,7 @@ class DashcamFragment() : Fragment() {
      */
     private fun startRecording() {
         val videoFile = File(
-            requireContext().filesDir, "Recording-" +
+            requireContext().filesDir, "/dashcam/Recording-" +
                     SimpleDateFormat(
                         "yyyy-MM-dd-HH-mm-ss-SSS", Locale.US
                     ).format(System.currentTimeMillis()) + ".mp4"
@@ -200,58 +207,35 @@ class DashcamFragment() : Fragment() {
                 }
             }
         }
-        updateUI(event);
+        splitRecording(event)
     }
 
     /**
-     * Update the UI according to CameraX VideoRecordEvent type:
+     * Splits the recording when the user defined record time is reached.
      */
-    private fun updateUI(event: VideoRecordEvent) {
-        val state = if (event is VideoRecordEvent.Status) recordingState.getName()
-        else event.getName()
-        when (event) {
-            is VideoRecordEvent.Start -> {
-                showUI(UiState.RECORDING)
-            }
-            is VideoRecordEvent.Finalize -> {
-                showUI(UiState.FINALIZED)
-            }
-        }
-
+    private fun splitRecording(event: VideoRecordEvent) {
         val stats = event.recordingStats
-        val size = stats.numBytesRecorded / 1000
         val time = java.util.concurrent.TimeUnit.NANOSECONDS.toSeconds(stats.recordedDurationNanos)
-        // TODO: Important part, check how they keep track of time as we may need this
-        var text = "${state}: recorded ${size}KB, in ${time}second"
-        if (event is VideoRecordEvent.Finalize)
-            text = "${text}\nFile saved to: ${event.outputResults.outputUri}"
 
-        Log.i(TAG, "recording event: $text")
-    }
-
-    /**
-     * initialize UI for recording:
-     */
-    private fun showUI(state: UiState) {
-        binding!!.let {
-            when (state) {
-                UiState.IDLE -> {
-                    it.captureButton.setImageResource(R.drawable.ic_start)
-                }
-                UiState.RECORDING -> {
-                    it.captureButton.setImageResource(R.drawable.ic_stop)
-                    it.captureButton.isEnabled = true
-                }
-                UiState.FINALIZED -> {
-                    it.captureButton.setImageResource(R.drawable.ic_start)
-                }
+        // TODO: Use user defined seconds
+        if (time > 10) {
+            val recording = activeRecording
+            if (recording != null) {
+                Log.e(TAG, stats.recordedDurationNanos.toString())
+                activeRecording?.stop()
+                startRecording()
+            } else {
+                throw RuntimeException("Unexpected state of recording")
             }
         }
     }
 
     private val requestPermissionsLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            if (!permissions.all { it.value }) {
+            if (permissions.all { it.value }) {
+                // Enable UI elements
+                enableUI(true)
+            } else {
                 Log.i(TAG, "Request for permissions denied")
                 Toast.makeText(
                     requireContext(),
@@ -270,24 +254,5 @@ class DashcamFragment() : Fragment() {
         ).forEach {
             it.isEnabled = enable
         }
-    }
-}
-
-// Camera UI  states and inputs
-enum class UiState {
-    IDLE,
-    RECORDING,
-    FINALIZED,
-}
-
-/**
- * A helper extended function to get the name(string) for the VideoRecordEvent.
- */
-fun VideoRecordEvent.getName(): String {
-    return when (this) {
-        is VideoRecordEvent.Status -> "Status"
-        is VideoRecordEvent.Start -> "Started"
-        is VideoRecordEvent.Finalize -> "Finalized"
-        else -> throw IllegalArgumentException()
     }
 }
