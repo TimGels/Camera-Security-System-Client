@@ -21,19 +21,19 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private var _binding : ActivityMainBinding? = null
+    private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
+
+    lateinit var connectionLiveData: ConnectionLiveData
 
     private lateinit var navController: NavController
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var appBarConfiguration: AppBarConfiguration
 
-    private lateinit var listener : NavController.OnDestinationChangedListener
+    private lateinit var listener: NavController.OnDestinationChangedListener
 
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>? = null
-
-    private var serverConnection: ServerConnection? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,27 +43,38 @@ class MainActivity : AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
 
-        // TODO: get from private preferences
-        val isLoggedIn = true
-        val hasConnection = true
-        val port = 5042
-        val hostname = "192.168.1.147"
-        serverConnection = ServerConnection(port, hostname)
-        if (isLoggedIn && hasConnection) {
-            GlobalScope.launch {
-                serverConnection!!.initializeConnection()
-            }
-        }
+        val context = this.applicationContext
 
-        listener = NavController.OnDestinationChangedListener{ _, destination, _ ->
+        connectionLiveData = ConnectionLiveData(this)
+        connectionLiveData.observe(this, { isNetworkAvailable ->
+            Log.e("NETWORK", "Connected = $isNetworkAvailable")
+
+            if (isNetworkAvailable) {
+                GlobalScope.launch {
+                    ServerConnection.getInstance().connectIfPossible(context)
+                }
+            }
+
+        })
+
+
+        listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.homeFragment) {
-                supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(
-                    R.color.design_default_color_primary_dark
-                ))))
+                supportActionBar?.setBackgroundDrawable(
+                    (ColorDrawable(
+                        getColor(
+                            R.color.design_default_color_primary_dark
+                        )
+                    ))
+                )
             } else if (destination.id == R.id.settingsActivity) {
-                supportActionBar?.setBackgroundDrawable((ColorDrawable(getColor(
-                    R.color.teal_700
-                ))))
+                supportActionBar?.setBackgroundDrawable(
+                    (ColorDrawable(
+                        getColor(
+                            R.color.teal_700
+                        )
+                    ))
+                )
             }
         }
     }
@@ -89,8 +100,7 @@ class MainActivity : AppCompatActivity() {
             if (id == R.id.settingsActivity) {
                 val newIntent = Intent(applicationContext, SettingsActivity::class.java)
                 applicationContext.startActivity(newIntent)
-            }
-            else{
+            } else {
                 Log.e("TAG:", "$id")
             }
 

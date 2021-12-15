@@ -39,10 +39,10 @@ class ConnectDialog : AppCompatDialogFragment() {
         val inflater = requireActivity().layoutInflater
         binding = ConnectDialogLayoutBinding.inflate(inflater)
 
-        this.cameraidStr    = resources.getString(R.string.camera_id)
-        this.portStr        = resources.getString(R.string.port)
-        this.ipaddressStr   = resources.getString(R.string.ip_address)
-        this.passwordStr    = resources.getString(R.string.password)
+        this.cameraidStr    = resources.getString(R.string.camera_id_title)
+        this.portStr        = resources.getString(R.string.port_title)
+        this.ipaddressStr   = resources.getString(R.string.ip_address_title)
+        this.passwordStr    = resources.getString(R.string.password_title)
 
         //Get the id of the input fields
         val editTextCameraId  = binding.editCameraId
