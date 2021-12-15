@@ -25,4 +25,3 @@
     <string name="err_at_least">%1$s must be %2$d at minimum!</string>
     <string name="err_at_most">%1$s must be %2$d as maximum!</string>
 </resources>
-s
