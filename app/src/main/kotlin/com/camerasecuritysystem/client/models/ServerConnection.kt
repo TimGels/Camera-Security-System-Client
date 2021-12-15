@@ -4,17 +4,22 @@ import android.content.Context
 import android.util.Log
 import com.camerasecuritysystem.client.KeyStoreHelper
 import com.camerasecuritysystem.client.R
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.features.websocket.*
-import io.ktor.http.*
-import io.ktor.http.cio.websocket.*
-import io.ktor.network.sockets.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.features.websocket.WebSockets
+import io.ktor.client.features.websocket.DefaultClientWebSocketSession
+import io.ktor.client.features.websocket.ws
+import io.ktor.http.HttpMethod
+import io.ktor.http.cio.websocket.Frame
+import io.ktor.http.cio.websocket.FrameType
+import io.ktor.http.cio.websocket.readBytes
+import io.ktor.network.sockets.ConnectTimeoutException
+import java.nio.channels.ClosedChannelException
+import java.nio.channels.UnresolvedAddressException
 import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.nio.channels.ClosedChannelException
 
 class ServerConnection {
 
@@ -39,7 +44,6 @@ class ServerConnection {
     }
 
     private var webSocketSession: DefaultClientWebSocketSession? = null
-
 
     private suspend fun initializeConnection(credentials: HashMap<String, String>) {
         try {
@@ -91,7 +95,8 @@ class ServerConnection {
             Log.e(tag, ex.message.toString())
         } catch (ex: ConnectTimeoutException) {
             Log.e(tag, ex.message.toString())
-
+        } catch (ex: UnresolvedAddressException) {
+            Log.e(tag, ex.message.toString())
         } finally {
             webSocketSession = null
         }

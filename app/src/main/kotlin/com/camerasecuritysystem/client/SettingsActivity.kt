@@ -108,39 +108,25 @@ class SettingsActivity : AppCompatActivity(),
         return false
     }
 
-    override fun applyTexts(cameraID: String?, port: String?, ipAddress: String?, password: String?) {
-        //TODO Input validatie
-        if (password != null) {
-            val pair = keyStore.encryptData(password)
+    override fun applyTexts(cameraID: String, port: String, ipAddress: String, password: String) {
 
-            sharedPreferences.edit().putString(
-                resources.getString(R.string.pwdIVByte),
-                pair.first.toString(Charsets.ISO_8859_1)
-            )
-                .apply()
-            sharedPreferences.edit().putString(
-                resources.getString(R.string.encPwd),
-                pair.second.toString(Charsets.ISO_8859_1)
-            )
-                .apply()
-        }
+        // Encrypt the password
+        val pair = keyStore.encryptData(password)
 
-        //TODO Input validatie
-        if (port != null) {
-            sharedPreferences.edit().putString(resources.getString(R.string.port), port).apply()
-        }
+        // Store the IV bytes encrypted and the password
+        sharedPreferences.edit().putString(
+            resources.getString(R.string.pwdIVByte),
+            pair.first.toString(Charsets.ISO_8859_1)
+        ).apply()
+        sharedPreferences.edit().putString(
+            resources.getString(R.string.encPwd),
+            pair.second.toString(Charsets.ISO_8859_1)
+        ).apply()
 
-        //TODO Input validatie
-        if (ipAddress != null) {
-            sharedPreferences.edit().putString(resources.getString(R.string.ip_address), ipAddress)
-                .apply()
-        }
+        sharedPreferences.edit().putString(resources.getString(R.string.port), port).apply()
 
-        //TODO Input validatie
-        if (cameraID != null && cameraID != "") {
-            sharedPreferences.edit().putString(resources.getString(R.string.camera_id), cameraID)
-                .apply()
-        }
+        sharedPreferences.edit().putString(resources.getString(R.string.ip_address), ipAddress).apply()
+
+        sharedPreferences.edit().putString(resources.getString(R.string.camera_id), cameraID).apply()
     }
-
 }

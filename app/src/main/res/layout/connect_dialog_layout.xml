@@ -11,13 +11,14 @@
         android:id="@+id/inputLayoutCameraID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Camera ID"
+        android:hint="@string/camera_id_title"
         android:scrollbarSize="25dp"
         app:boxBackgroundColor="@color/white"
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_camera_id"
@@ -39,7 +40,8 @@
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputLayoutCameraID">
+        app:layout_constraintTop_toBottomOf="@+id/inputLayoutCameraID"
+        app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_port"
@@ -61,30 +63,32 @@
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputLayoutPort">
+        app:layout_constraintTop_toBottomOf="@+id/inputLayoutPort"
+        app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_ip_address"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="phone" />
+            android:inputType="text" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
 
+        android:id="@+id/inputLayoutPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Password"
+        android:hint="@string/password_title"
         android:scrollbarSize="25dp"
         app:boxBackgroundColor="@color/white"
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputLayoutIpAddress"
-        app:passwordToggleEnabled="true">
-
+        app:passwordToggleEnabled="true"
+        app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_password"
