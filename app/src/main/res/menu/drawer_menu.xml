@@ -4,6 +4,9 @@
         <item
             android:id="@+id/settingsActivity"
             android:title="Settings" />
+        <item
+            android:id="@+id/galleryActivity"
+            android:title="Gallery" />
 
     </group>
 </menu>
