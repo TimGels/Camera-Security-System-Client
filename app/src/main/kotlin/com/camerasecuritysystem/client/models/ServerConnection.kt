@@ -79,11 +79,11 @@ class ServerConnection {
                     for (frame in incoming) {
                         if (frame is Frame.Binary) {
                             val json = String(frame.readBytes())
-                            val serverMessage: Message =
-                                Json.decodeFromString(json) //decodeFromString(json)
-                            MessageHandler.handleMessage(serverMessage, getInstance()!!)
+                            val serverMessage: Message = Json.decodeFromString(json)
+                            MessageHandler.handleMessage(serverMessage, getInstance())
                         }
                     }
+
                 } catch (ex: ClosedChannelException) {
                     Log.e("Channel", "exception: channel closed!")
                 }
