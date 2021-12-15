@@ -1,39 +1,35 @@
 package com.camerasecuritysystem.client.models
 
-import android.app.Activity
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import com.camerasecuritysystem.client.KeyStoreHelper
 import com.camerasecuritysystem.client.R
-import io.ktor.client.HttpClient
+import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.features.*
 import io.ktor.client.features.websocket.*
 import io.ktor.http.*
-import io.ktor.http.auth.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.network.sockets.*
-import kotlinx.coroutines.*
-
 import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.io.IOException
-import java.lang.Exception
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.net.SocketAddress
 import java.nio.channels.ClosedChannelException
-import java.util.logging.Handler
 
 class ServerConnection {
 
-    private val tag: String = "initializeConnection"
+    companion object{
+        @Volatile private var INSTANCE : ServerConnection? = null
 
-    private var port: Int = 5042
-    private var hostname: String = "192.168.1.147"
+        fun getInstance(): ServerConnection{
+            if (INSTANCE == null){
+                INSTANCE = ServerConnection()
+            }
+            return INSTANCE!!
+        }
+    }
+
+    private val tag: String = "initializeConnection"
 
     private var client: HttpClient = HttpClient(CIO) {
         install(WebSockets) {
@@ -41,47 +37,19 @@ class ServerConnection {
         }
     }
 
-    private var serverConnection: ServerConnection? = null
     private var webSocketSession: DefaultClientWebSocketSession? = null
-    private lateinit var context: Context
-    private lateinit var activity: Activity
 
-    constructor(port: Int, hostname: String) {
-        this.port = port
-        this.hostname = hostname
-        this.serverConnection = this
-    }
 
-    constructor(activity: Activity) {
-        this.activity = activity
-        this.context = activity.applicationContext
-        this.serverConnection = this
-    }
 
-    private suspend fun initializeConnection() {
+    private suspend fun initializeConnection(credentials: HashMap<String, String>) {
         try {
-            var sharedPreferences =
-                context.getSharedPreferences(
-                    "com.camerasecuritysystem.client",
-                    Context.MODE_PRIVATE
-                )
 
-            val cameraId =
-                sharedPreferences.getString(context.resources.getString(R.string.camera_id), null)
-                    ?.toInt()
-            val pwd =
-                sharedPreferences.getString(context.resources.getString(R.string.encPwd), null)
-                    ?.toByteArray(Charsets.ISO_8859_1)
-            val pwdIVByte =
-                sharedPreferences.getString(context.resources.getString(R.string.pwdIVByte), null)
-                    ?.toByteArray(Charsets.ISO_8859_1)
-            val port = sharedPreferences.getString(context.resources.getString(R.string.port), "0")
-                ?.toInt()
-            val hostname =
-                sharedPreferences!!.getString(
-                    context.resources.getString(R.string.ip_address),
-                    null
-                )
+            val cameraId : Int? = credentials["camera_id"]?.toInt()
+            val pwd = credentials["encPwd"]?.toByteArray(Charsets.ISO_8859_1)
+
+            val pwdIVByte = credentials["pwdIVByte"]?.toByteArray(Charsets.ISO_8859_1)
+            val port : Int? = credentials["port"]?.toInt()
+            val hostname = credentials["ip_address"]
 
             client.ws(
                 method = HttpMethod.Get,
@@ -93,7 +61,7 @@ class ServerConnection {
                 webSocketSession = this
 
                 // Send the initial login message
-                serverConnection!!.sendMessage(
+                getInstance().sendMessage(
                     Message(
                         type = MessageType.LOGIN,
                         id = cameraId!!,
@@ -109,7 +77,7 @@ class ServerConnection {
                             val json = String(frame.readBytes())
                             val serverMessage: Message =
                                 Json.decodeFromString(json) //decodeFromString(json)
-                            MessageHandler.handleMessage(serverMessage, serverConnection!!)
+                            MessageHandler.handleMessage(serverMessage, getInstance()!!)
                         }
                     }
 
@@ -130,10 +98,6 @@ class ServerConnection {
         } catch (ex: ConnectTimeoutException) {
             Log.e(tag, ex.message.toString())
 
-            activity.runOnUiThread {
-                Toast.makeText(activity, "Connection refused", Toast.LENGTH_SHORT).show()
-            }
-
         } finally {
             webSocketSession = null
         }
@@ -146,6 +110,7 @@ class ServerConnection {
         }
 
         try {
+
             // Encode message to JSON
             val dataBa = Json.encodeToString(message).toByteArray()
 
@@ -166,7 +131,7 @@ class ServerConnection {
 
     fun isConnected() = webSocketSession != null
 
-    private fun credentialsEntered(): Boolean {
+    private fun credentialsEntered(context: Context): Boolean {
         var sharedPreferences =
             context.getSharedPreferences("com.camerasecuritysystem.client", Context.MODE_PRIVATE)
 
@@ -188,10 +153,34 @@ class ServerConnection {
 
     }
 
-    suspend fun connectIfPossible() {
-        if (credentialsEntered()) {
-            initializeConnection()
+    suspend fun connectIfPossible(context: Context) {
+        if (credentialsEntered(context)) {
+            initializeConnection(getCredentials(context))
         }
-        Log.e("Creds enetered", "${credentialsEntered()}")
+        Log.e("Creds entered", "${credentialsEntered(context)}")
+    }
+
+    private fun getCredentials(context : Context): HashMap<String, String>{
+        var sharedPreferences =
+            context.getSharedPreferences("com.camerasecuritysystem.client", Context.MODE_PRIVATE)
+
+        val camera_id =
+            sharedPreferences.getString(context.resources.getString(R.string.camera_id), null)
+        val pwd = sharedPreferences.getString(context.resources.getString(R.string.encPwd), null)
+        val pwdIVByte =
+            sharedPreferences.getString(context.resources.getString(R.string.pwdIVByte), null)
+        val port = sharedPreferences.getString(context.resources.getString(R.string.port), null)
+        val hostname =
+            sharedPreferences.getString(context.resources.getString(R.string.ip_address), null)
+
+        val hashMap :HashMap<String, String> = HashMap()
+
+        hashMap.put(context.resources.getString(R.string.camera_id), camera_id!!)
+        hashMap.put(context.resources.getString(R.string.encPwd), pwd!!)
+        hashMap.put(context.resources.getString(R.string.pwdIVByte), pwdIVByte!!)
+        hashMap.put(context.resources.getString(R.string.port), port!!)
+        hashMap.put(context.resources.getString(R.string.ip_address), hostname!!)
+
+        return hashMap
     }
 }

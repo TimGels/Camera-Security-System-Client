@@ -47,13 +47,15 @@ class MainActivity : AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
 
+        val context = this.applicationContext
+
         connectionLiveData = ConnectionLiveData(this)
         connectionLiveData.observe(this, { isNetworkAvailable ->
             Log.e("NETWORK", "Connected = $isNetworkAvailable")
 
             if (isNetworkAvailable) {
                 GlobalScope.launch {
-                    ServerConnection(this@MainActivity).connectIfPossible()
+                    ServerConnection.getInstance().connectIfPossible(context)
                 }
             }
 

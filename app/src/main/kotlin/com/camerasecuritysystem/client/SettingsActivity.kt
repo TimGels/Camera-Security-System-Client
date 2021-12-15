@@ -1,13 +1,13 @@
 package com.camerasecuritysystem.client
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import com.camerasecuritysystem.client.databinding.ActivitySettingsBinding
 import com.camerasecuritysystem.client.models.ServerConnection
 import kotlinx.coroutines.GlobalScope
@@ -40,7 +40,7 @@ class SettingsActivity : AppCompatActivity(),
         pwdIV = sharedPreferences.getString(resources.getString(R.string.pwdIVByte), "")
 
 
-        var settings = findViewById<View>(R.id.textViewConnectionSettings)
+        val settings = findViewById<View>(R.id.textViewConnectionSettings)
         settings.setOnClickListener {
             openDialog()
         }
@@ -49,12 +49,22 @@ class SettingsActivity : AppCompatActivity(),
 
         connectBtn.setOnClickListener {
 
+            val context = this.applicationContext
+
             //Try to setup a connection
             GlobalScope.launch {
                 try {
-                    ServerConnection(this@SettingsActivity).connectIfPossible()
+                    val connection = ServerConnection.getInstance()
+                    if (!connection.isConnected()){
+                        connection.connectIfPossible(context)
+
+                        Log.e("Connection", "Verbinden mogelijk: ${connection.connectIfPossible(context)}")
+                    }else{
+                        Log.e("Connection", "Ik ben al verbonden")
+                    }
+
                 } catch (e: Exception) {
-                    Log.e("CONNECTION ERROR", "${e.message.toString()}")
+                    Log.e("CONNECTION ERROR", e.message.toString())
                 }
             }
         }
@@ -71,7 +81,7 @@ class SettingsActivity : AppCompatActivity(),
 
     private fun updateUI(){
 
-        var isNetworkAvailable = connectionLiveData.value
+        val isNetworkAvailable = connectionLiveData.value
         Log.e("LiveData value", "$isNetworkAvailable")
 
         if (isNetworkAvailable == null || !isNetworkAvailable  ) {
