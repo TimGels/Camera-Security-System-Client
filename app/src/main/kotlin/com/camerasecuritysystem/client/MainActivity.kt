@@ -4,8 +4,12 @@ import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -18,6 +22,7 @@ import com.camerasecuritysystem.client.databinding.ActivityMainBinding
 import com.camerasecuritysystem.client.models.ServerConnection
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: RecyclerView.Adapter<RecyclerAdapter.ViewHolder>? = null
+    private var drawerOpen = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +48,19 @@ class MainActivity : AppCompatActivity() {
 
         layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
+
+//        val toolbar = this.findViewById<androidx.appcompat.widget.Toolbar>(R.id.action_bar)
+//
+//
+//        toolbar?.setNavigationOnClickListener(View.OnClickListener {
+//            if (drawerOpen) {
+//                drawerLayout.closeDrawer(GravityCompat.END);
+//                drawerOpen = true
+//            } else {
+//                drawerLayout.openDrawer(GravityCompat.START);
+//                drawerOpen = false
+//            }
+//        })
 
         val context = this.applicationContext
 
@@ -58,24 +77,33 @@ class MainActivity : AppCompatActivity() {
         })
 
 
+
         listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.homeFragment) {
-                supportActionBar?.setBackgroundDrawable(
-                    (ColorDrawable(
-                        getColor(
-                            R.color.design_default_color_primary_dark
-                        )
-                    ))
-                )
-            } else if (destination.id == R.id.settingsActivity) {
-                supportActionBar?.setBackgroundDrawable(
-                    (ColorDrawable(
-                        getColor(
-                            R.color.teal_700
-                        )
-                    ))
-                )
-            }
+//            if (destination.id == R.id.homeFragment) {
+//                supportActionBar?.setBackgroundDrawable(
+//                    (ColorDrawable(
+//                        getColor(
+//                            R.color.design_default_color_primary_dark
+//                        )
+//                    ))
+//                )
+//            } else if (destination.id == R.id.settingsActivity) {
+//                supportActionBar?.setBackgroundDrawable(
+//                    (ColorDrawable(
+//                        getColor(
+//                            R.color.teal_700
+//                        )
+//                    ))
+//                )
+//            } else if (destination.id == R.id.galleryActivity) {
+//                supportActionBar?.setBackgroundDrawable(
+//                    (ColorDrawable(
+//                        getColor(
+//                            R.color.teal_700
+//                        )
+//                    ))
+//                )
+//            }
         }
     }
 
@@ -99,6 +127,9 @@ class MainActivity : AppCompatActivity() {
             val id: Int = menuItem.itemId
             if (id == R.id.settingsActivity) {
                 val newIntent = Intent(applicationContext, SettingsActivity::class.java)
+                applicationContext.startActivity(newIntent)
+            } else if (id == R.id.galleryActivity) {
+                val newIntent = Intent(applicationContext, GalleryActivity::class.java)
                 applicationContext.startActivity(newIntent)
             } else {
                 Log.e("TAG:", "$id")
