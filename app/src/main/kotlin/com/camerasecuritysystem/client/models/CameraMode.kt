@@ -1,4 +1,4 @@
-package com.camerasecuritysystem.client
+package com.camerasecuritysystem.client.models
 
 enum class CameraMode {
     MOTIONCAMERA,
