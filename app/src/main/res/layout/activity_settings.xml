@@ -34,6 +34,44 @@
             android:backgroundTint="@color/design_default_color_primary"
             android:text="Connect"
             android:textColor="@color/white" />
+
     </LinearLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/fragment_length_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/recording_fragment_length"
+        android:padding="16dp"
+        app:boxBackgroundColor="@color/white"
+        app:errorEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/recordingSecondsInput"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:digits="0123456789"
+            android:inputType="number" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="60dp"
+        android:paddingEnd="60dp">
+
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="@string/cancel_button" />
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/save_button" />
+    </RelativeLayout>
 </LinearLayout>

@@ -20,6 +20,9 @@
     <string name="title_activity_main">Home</string>
     <string name="title_activity_camera">Camera</string>
 
+    <string name="recording_fragment_length">Fragment recording length in seconds</string>
+    <string name="save_button">Save</string>
+    <string name="cancel_button">Cancel</string>
 
 
     <string name="capture">Capture</string>
