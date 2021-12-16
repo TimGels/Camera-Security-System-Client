@@ -1,6 +1,7 @@
 package com.camerasecuritysystem.client
 
 import android.Manifest
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlin.properties.Delegates
 
 class DashcamFragment : Fragment() {
 
@@ -33,10 +35,23 @@ class DashcamFragment : Fragment() {
     private lateinit var videoCapture: VideoCapture<Recorder>
     private val mainThreadExecutor by lazy { ContextCompat.getMainExecutor(requireContext()) }
 
+    private var timeLimitFragment by Delegates.notNull<Int>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        var sharedPreferences =
+            requireContext().getSharedPreferences(
+                "com.camerasecuritysystem.client",
+                Context.MODE_PRIVATE
+            )
+
+        timeLimitFragment = sharedPreferences.getInt(
+            resources.getString(R.string.fragment_recording_seconds),
+            resources.getInteger(R.integer.default_fragment_recording_seconds)
+        )
+
         binding = FragmentDashcamBinding.inflate(inflater, container, false)
 
         return binding!!.root
@@ -217,8 +232,7 @@ class DashcamFragment : Fragment() {
         val stats = event.recordingStats
         val time = java.util.concurrent.TimeUnit.NANOSECONDS.toSeconds(stats.recordedDurationNanos)
 
-        // TODO: Use user defined seconds
-        if (time > 10) {
+        if (time > timeLimitFragment) {
             val recording = activeRecording
             if (recording != null) {
                 Log.e(TAG, stats.recordedDurationNanos.toString())

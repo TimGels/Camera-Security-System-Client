@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="default_fragment_recording_seconds">5</integer>
+    <string name="fragment_recording_seconds">fragment_recording_seconds</string>
+</resources>

@@ -3,9 +3,10 @@ package com.camerasecuritysystem.client
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import android.view.View
-import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.camerasecuritysystem.client.databinding.ActivitySettingsBinding
 import com.camerasecuritysystem.client.models.ServerConnection
@@ -15,39 +16,44 @@ import kotlinx.coroutines.launch
 class SettingsActivity : AppCompatActivity(),
     ConnectDialog.ConnectDialogListener {
 
-    private var binding: ActivitySettingsBinding? = null
+    private lateinit var binding: ActivitySettingsBinding
 
     private var keyStore = KeyStoreHelper("connectToServer")
 
     lateinit var connectionLiveData: ConnectionLiveData
 
-    lateinit var connectBtn : Button
+    private var isFragmentDurationValid: Boolean = false
 
     private lateinit var sharedPreferences: SharedPreferences
     var pwdIV: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
 
         sharedPreferences =
             this.getSharedPreferences("com.camerasecuritysystem.client", Context.MODE_PRIVATE)
 
         pwdIV = sharedPreferences.getString(resources.getString(R.string.pwdIVByte), "")
 
-
-        val settings = findViewById<View>(R.id.textViewConnectionSettings)
-        settings.setOnClickListener {
+        binding.textViewConnectionSettings.setOnClickListener {
             openDialog()
         }
 
-        connectBtn = findViewById<View>(R.id.connectBtn) as Button
+        binding.saveButton.setOnClickListener {
+            saveSettings()
+        }
 
-        connectBtn.setOnClickListener {
+        binding.cancelButton.setOnClickListener {
+            finish()
+        }
 
+        binding.connectBtn.setOnClickListener {
             val context = this.applicationContext
 
             //Try to setup a connection
@@ -67,7 +73,7 @@ class SettingsActivity : AppCompatActivity(),
                 }
             }
         }
-
+        initializeUISettings()
         connectionLiveData = ConnectionLiveData(this)
         connectionLiveData.observe(this, { isNetworkAvailable ->
             Log.e("NETWORK", "Connected = $isNetworkAvailable")
@@ -76,24 +82,23 @@ class SettingsActivity : AppCompatActivity(),
         updateUI()
     }
 
-    private fun updateUI(){
+    private fun updateUI() {
 
         val isNetworkAvailable = connectionLiveData.value
 
-        if (isNetworkAvailable == null || !isNetworkAvailable  ) {
-            connectBtn.isClickable = false
-            connectBtn.isEnabled = false
-            connectBtn.backgroundTintList =
+        if (isNetworkAvailable == null || !isNetworkAvailable) {
+            binding.connectBtn.isClickable = false
+            binding.connectBtn.isEnabled = false
+            binding.connectBtn.backgroundTintList =
                 getColorStateList(R.color.cardview_dark_background)
 
-            connectBtn.text = "No internet"
-        }
-        else if (isNetworkAvailable == true) {
-            connectBtn.isClickable = true
-            connectBtn.isEnabled = true
-            connectBtn.backgroundTintList =
+            binding.connectBtn.text = "No internet"
+        } else if (isNetworkAvailable == true) {
+            binding.connectBtn.isClickable = true
+            binding.connectBtn.isEnabled = true
+            binding.connectBtn.backgroundTintList =
                 getColorStateList(R.color.design_default_color_primary)
-            connectBtn.text = "Connect"
+            binding.connectBtn.text = "Connect"
         }
 
     }
@@ -106,6 +111,92 @@ class SettingsActivity : AppCompatActivity(),
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return false
+    }
+
+    private fun initializeUISettings() {
+        initializeFragmentRecordingLengthElement()
+    }
+
+    private fun initializeFragmentRecordingLengthElement() {
+        val fragmentRecordingSeconds: String = sharedPreferences.getInt(
+            resources.getString(R.string.fragment_recording_seconds),
+            resources.getInteger(R.integer.default_fragment_recording_seconds)
+        ).toString()
+
+        binding.recordingSecondsInput.setText(fragmentRecordingSeconds)
+
+        binding.recordingSecondsInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                isFragmentDurationValid = validateFragmentRecordingLengthElement(s.toString())
+            }
+        })
+
+        isFragmentDurationValid = validateFragmentRecordingLengthElement(fragmentRecordingSeconds)
+    }
+
+    private fun validateFragmentRecordingLengthElement(value: String?): Boolean {
+        if (value == null) {
+            Log.w("Empty", "Encountered unexpected NULL value.")
+            return false
+        }
+
+        if (value.isBlank()) {
+            binding.fragmentLengthLayout.error =
+                String.format(resources.getString(R.string.err_not_empty), "Input")
+            return false
+        }
+
+        if (value.toIntOrNull() == null) {
+            binding.fragmentLengthLayout.error =
+                String.format(
+                    resources.getString(R.string.err_must_be_number),
+                    "Input"
+                )
+            return false
+        }
+
+        if (value.toIntOrNull()!! < 1) {
+            binding.fragmentLengthLayout.error =
+                String.format(
+                    resources.getString(R.string.err_at_least),
+                    "Input", 1
+                )
+            return false
+        }
+
+        binding.fragmentLengthLayout.error = null
+        return true
+    }
+
+
+    private fun saveSettings() {
+        if (!isFragmentDurationValid) {
+            Toast.makeText(
+                this,
+                "Cannot save invalid settings.",
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+        saveFragmentRecordingLength()
+        finish()
+    }
+
+    private fun saveFragmentRecordingLength() {
+        try {
+            sharedPreferences.edit().putInt(
+                resources.getString(R.string.fragment_recording_seconds),
+                binding.recordingSecondsInput.text.toString().toInt()
+            ).apply()
+        } catch (ex: NumberFormatException) {
+            Toast.makeText(
+                this,
+                "Failed to save fragment recording length.", Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     override fun applyTexts(cameraID: String, port: String, ipAddress: String, password: String) {
