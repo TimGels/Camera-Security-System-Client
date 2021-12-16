@@ -2,18 +2,14 @@ package com.camerasecuritysystem.client.gallery
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.camerasecuritysystem.client.CameraActivity
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.camerasecuritysystem.client.R
-import com.camerasecuritysystem.client.RecyclerAdapter
-import com.camerasecuritysystem.client.models.CameraMode
 import com.camerasecuritysystem.client.models.Video
 
 class VideoAdapter(
@@ -27,7 +23,14 @@ class VideoAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.image.setImageBitmap(videos[position].thumbnail)
+//        holder.image.setImageBitmap(videos[position].thumbnail)
+
+            GlideApp.with(context).load(videos[position].thumbnail)
+            .placeholder(R.color.black)
+            .dontAnimate()
+            .diskCacheStrategy(DiskCacheStrategy.ALL).thumbnail(0.25f)
+            .into(holder.image)
+
 //        holder.itemTitle.text = videos[position].path
 //        holder.itemImage.setImageResource(images[position])
     }

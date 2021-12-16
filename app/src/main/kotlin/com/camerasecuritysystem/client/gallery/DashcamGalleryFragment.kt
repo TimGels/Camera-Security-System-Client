@@ -1,5 +1,6 @@
 package com.camerasecuritysystem.client.gallery
 
+import android.graphics.BitmapFactory
 import android.media.ThumbnailUtils
 import android.os.Build
 import android.os.Bundle
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.camerasecuritysystem.client.R
 import com.camerasecuritysystem.client.models.Video
 import java.io.File
+import android.media.MediaMetadataRetriever
 
 
 class DashcamGalleryFragment : Fragment() {
@@ -42,30 +44,33 @@ class DashcamGalleryFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun fetchVideosFromFiles(){
+    private fun fetchVideosFromFiles() {
 
         val path = "${requireContext().filesDir}/dashcam/"
 
-        var directory = File(path)
+        val directory = File(path)
 
         val files = directory.listFiles()
+        val retriever = MediaMetadataRetriever()
 
-        var videoArray = ArrayList<Video>()
+        val videoArray = ArrayList<Video>()
         var index = 0
 
-        while (index < files.size){
+        while (index < files.size) {
+            try{
+                val currentFile = files[index]
+                val path = currentFile.path
+                retriever.setDataSource(path)
 
-            Log.e("VIDEO", "$index")
-            val currentFile = files[index]
+                val embedPic = retriever.getScaledFrameAtTime(0,0,256,256)
 
-            val path = currentFile.path
-            val thumb = ThumbnailUtils.createVideoThumbnail(path,
-                MediaStore.Images.Thumbnails.MINI_KIND); //ThumbnailUtils.createVideoThumbnail(File(path), Size.parseSize("3*+6"), CancellationSignal())
+                videoArray.add(Video(path,embedPic))
+            }catch (e : Exception){
+                Log.e("Thumbnail retriever: ", "$e")
+            }finally {
+                index++
+            }
 
-            Log.e("THUMB", "$thumb")
-
-            videoArray.add(Video(path, thumb))
-            index++
 
         }
 
