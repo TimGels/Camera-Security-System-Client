@@ -56,12 +56,16 @@ class ConnectDialog : AppCompatDialogFragment() {
             Context.MODE_PRIVATE)
 
         //Assign the preferences to variables
-        val cameraId  = sharedPreferences.getString("camera_id", null)
-        val port      = sharedPreferences.getString("port", null)
-        val ipAddress = sharedPreferences.getString("ip_address", null)
-
-        val encPwd = sharedPreferences.getString("encPwd", null)
-        val ivByte = sharedPreferences.getString("pwdIVByte", null)
+        val cameraId =
+            sharedPreferences.getString(resources.getString(R.string.camera_id), null)
+        val port =
+            sharedPreferences.getString(resources.getString(R.string.port), null)
+        val ipAddress =
+            sharedPreferences.getString(resources.getString(R.string.ip_address), null)
+        val encPwd =
+            sharedPreferences.getString(resources.getString(R.string.encPwd), null)
+        val ivByte =
+            sharedPreferences.getString(resources.getString(R.string.pwdIVByte), null)
 
         //Check if the ivByte and encrypted password exist
         if (ivByte != null && encPwd != null) {
