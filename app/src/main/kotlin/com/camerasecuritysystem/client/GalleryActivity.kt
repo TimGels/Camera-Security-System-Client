@@ -1,10 +1,15 @@
 package com.camerasecuritysystem.client
 
 import android.os.Bundle
+import android.view.Menu
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.widget.ViewPager2
 import com.camerasecuritysystem.client.databinding.ActivityGalleryBinding
+import com.camerasecuritysystem.client.gallery.DashcamGalleryFragment
 import com.camerasecuritysystem.client.gallery.FragmentAdapter
 import com.google.android.material.tabs.TabLayout
 
@@ -19,14 +24,15 @@ class GalleryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gallery)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//        supportActionBar?.hide()
+        supportActionBar?.hide()
 
         tabLayout = findViewById(R.id.tab_layout)
         pager = findViewById(R.id.view_pager)
 
-        val fm : FragmentManager = supportFragmentManager
-        adapter = FragmentAdapter(fm, lifecycle)
-        pager.adapter = adapter
+        val back_button = findViewById<ImageButton>(R.id.back_button)
+        back_button.setOnClickListener { onBackPressed() }
+
 
         tabLayout.addTab(tabLayout.newTab().setText("Dashcam"))
         tabLayout.addTab(tabLayout.newTab().setText("IP Camera"))
@@ -35,7 +41,7 @@ class GalleryActivity : AppCompatActivity() {
         tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
 
             override fun onTabSelected(tab: TabLayout.Tab) {
-                pager!!.currentItem = tab.position
+                pager.currentItem = tab.position
             }
             override fun onTabUnselected(tab: TabLayout.Tab) {
 
@@ -51,6 +57,13 @@ class GalleryActivity : AppCompatActivity() {
             }
         })
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val fm : FragmentManager = supportFragmentManager
+        adapter = FragmentAdapter(fm, lifecycle)
+        pager.adapter = adapter
     }
 
     override fun onSupportNavigateUp(): Boolean {

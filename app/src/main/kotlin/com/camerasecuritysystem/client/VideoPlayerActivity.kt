@@ -15,6 +15,7 @@ class VideoPlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_player)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         videoView = findViewById(R.id.videoView)
 
@@ -30,5 +31,10 @@ class VideoPlayerActivity : AppCompatActivity() {
 
     fun getVideoPath() : String? {
         return intent.getStringExtra("videoPath")
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return false
     }
 }

@@ -38,9 +38,14 @@ class DashcamGalleryFragment : Fragment() {
         recyclerViewLayoutManager = GridLayoutManager(context, 3)
         recyclerView.layoutManager = recyclerViewLayoutManager
 
-        fetchVideosFromFiles()
 
         return root
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fetchVideosFromFiles()
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
