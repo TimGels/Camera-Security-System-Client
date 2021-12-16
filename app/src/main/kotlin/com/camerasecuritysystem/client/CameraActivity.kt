@@ -31,7 +31,6 @@ class CameraActivity : AppCompatActivity() {
 
         val mode = getMode(intent)
 
-//      Verander tekst
         if (mode != null) {
 
             this.mode = mode

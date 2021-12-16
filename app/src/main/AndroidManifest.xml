@@ -21,6 +21,9 @@
         android:theme="@style/Theme.CameraSecuritySystem"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".VideoPlayerActivity"
+            android:exported="false" />
+        <activity
             android:name=".GalleryActivity"
             android:exported="false" />
         <activity

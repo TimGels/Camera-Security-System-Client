@@ -70,10 +70,7 @@ class DashcamGalleryFragment : Fragment() {
             }finally {
                 index++
             }
-
-
         }
-
         val videoAdapter = VideoAdapter(requireContext(), videoArray, requireActivity())
         recyclerView.adapter = videoAdapter
 
