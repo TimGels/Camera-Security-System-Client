@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.0'
+    id("io.gitlab.arturbosch.detekt").version("1.19.0")
 }
 
 android {
@@ -18,7 +19,7 @@ android {
 
     }
 
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
     }
 
@@ -34,6 +35,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    detekt {
+        toolVersion = "1.19.0"
+        config = files("${rootProject.projectDir}/config/detekt/detekt.yml")
+        baseline = file("${rootProject.projectDir}/config/detekt/baseline.xml")
     }
 }
 
@@ -80,4 +87,5 @@ dependencies {
 
 repositories {
     google()
+    mavenCentral()
 }

@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues />
+  <CurrentIssues>
+    <ID>EmptyFunctionBlock:SettingsActivity.kt$SettingsActivity.&lt;no name provided&gt;${}</ID>
+    <ID>ForbiddenComment:ConnectDialog.kt$ConnectDialog$// TODO: more thorough validation</ID>
+    <ID>ForbiddenComment:ServerConnection.kt$ServerConnection$// TODO: Log</ID>
+    <ID>LongMethod:ConnectDialog.kt$ConnectDialog$override fun onCreateDialog(savedInstanceState: Bundle?): Dialog</ID>
+    <ID>MagicNumber:ConnectDialog.kt$ConnectDialog$65535</ID>
+    <ID>MagicNumber:DoesNetworkHaveInternet.kt$DoesNetworkHaveInternet$1500</ID>
+    <ID>MagicNumber:DoesNetworkHaveInternet.kt$DoesNetworkHaveInternet$53</ID>
+    <ID>MagicNumber:KeyStoreHelper.kt$KeyStoreHelper$16</ID>
+    <ID>MagicNumber:ServerConnection.kt$ServerConnection$100</ID>
+    <ID>MagicNumber:ServerConnection.kt$ServerConnection$1000</ID>
+    <ID>MagicNumber:ServerConnection.kt$ServerConnection$8</ID>
+    <ID>MaxLineLength:CameraActivity.kt$CameraActivity$transaction.add(R.id.fragmentContainerView, DashcamFragment(), "DashcamFragment").commitAllowingStateLoss()</ID>
+    <ID>MaxLineLength:ConnectDialog.kt$ConnectDialog$binding.inputLayoutCameraID.error = String.format(resources.getString(R.string.err_not_empty), cameraidStr)</ID>
+    <ID>MaxLineLength:ConnectDialog.kt$ConnectDialog$binding.inputLayoutIpAddress.error = String.format(resources.getString(R.string.err_not_empty), ipaddressStr)</ID>
+    <ID>MaxLineLength:ConnectDialog.kt$ConnectDialog$binding.inputLayoutPassword.error = String.format(resources.getString(R.string.err_not_empty), passwordStr)</ID>
+    <ID>MaxLineLength:ConnectionLiveData.kt$ConnectionLiveData.&lt;no name provided&gt;$/* If the callback was registered with registerNetworkCallback() it will be called for each network which no longer satisfies the criteria of the callback. Source: https://developer.android.com/reference/android/net/ConnectivityManager.NetworkCallback#onLost(android.net.Network) */</ID>
+    <ID>MaxLineLength:DashcamFragment.kt$DashcamFragment$if</ID>
+    <ID>NewLineAtEndOfFile:CameraActivity.kt$com.camerasecuritysystem.client.CameraActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:CameraMode.kt$com.camerasecuritysystem.client.CameraMode.kt</ID>
+    <ID>NewLineAtEndOfFile:DashcamFragment.kt$com.camerasecuritysystem.client.DashcamFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:ExampleUnitTest.kt$com.camerasecuritysystem.client.ExampleUnitTest.kt</ID>
+    <ID>NewLineAtEndOfFile:ExampleInstrumentedTest.kt$com.camerasecuritysystem.client.ExampleInstrumentedTest.kt</ID>
+    <ID>NewLineAtEndOfFile:HomeFragment.kt$com.camerasecuritysystem.client.HomeFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:IPCameraFragment.kt$com.camerasecuritysystem.client.IPCameraFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:KeyStoreHelper.kt$com.camerasecuritysystem.client.KeyStoreHelper.kt</ID>
+    <ID>NewLineAtEndOfFile:MainActivity.kt$com.camerasecuritysystem.client.MainActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:MotionCameraFragment.kt$com.camerasecuritysystem.client.MotionCameraFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:RecyclerAdapter.kt$com.camerasecuritysystem.client.RecyclerAdapter.kt</ID>
+    <ID>ReturnCount:ConnectDialog.kt$ConnectDialog$private fun validateCameraId(cameraIdText: String?): Boolean</ID>
+    <ID>ReturnCount:ConnectDialog.kt$ConnectDialog$private fun validatePort(portText: String?): Boolean</ID>
+    <ID>ReturnCount:SettingsActivity.kt$SettingsActivity$private fun validateFragmentRecordingLengthElement(value: String?): Boolean</ID>
+    <ID>SwallowedException:ConnectDialog.kt$ConnectDialog$e: ClassCastException</ID>
+    <ID>SwallowedException:ServerConnection.kt$ServerConnection$ex: ClosedChannelException</ID>
+    <ID>TooGenericExceptionCaught:ConnectDialog.kt$ConnectDialog$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:DashcamFragment.kt$DashcamFragment$exc: Exception</ID>
+    <ID>TooGenericExceptionCaught:SettingsActivity.kt$SettingsActivity$e: Exception</ID>
+    <ID>TooGenericExceptionThrown:DashcamFragment.kt$DashcamFragment$throw RuntimeException("Unexpected state of recording")</ID>
+    <ID>UnusedPrivateMember:CameraActivity.kt$CameraActivity$private val binding get() = _binding!!</ID>
+    <ID>UtilityClassWithPublicConstructor:FootageHandler.kt$FootageHandler</ID>
+    <ID>UtilityClassWithPublicConstructor:MessageHandler.kt$MessageHandler</ID>
+    <ID>VariableNaming:CameraActivity.kt$CameraActivity$private val TAG = "CameraActivity"</ID>
+    <ID>VariableNaming:ConnectDialog.kt$ConnectDialog$val camera_til = binding.inputLayoutCameraID</ID>
+    <ID>VariableNaming:ConnectDialog.kt$ConnectDialog$val ipAddress_til = binding.inputLayoutIpAddress</ID>
+    <ID>VariableNaming:ConnectDialog.kt$ConnectDialog$val password_til = binding.inputLayoutPassword</ID>
+    <ID>VariableNaming:ConnectDialog.kt$ConnectDialog$val port_til = binding.inputLayoutPort</ID>
+    <ID>VariableNaming:ConnectionLiveData.kt$ConnectionLiveData$val TAG = "C-Manager"</ID>
+    <ID>VariableNaming:DashcamFragment.kt$DashcamFragment$private var TAG = "DEBUG TEXT"</ID>
+    <ID>VariableNaming:ServerConnection.kt$ServerConnection$val camera_id = sharedPreferences.getString(context.resources.getString(R.string.camera_id), null)</ID>
+    <ID>WildcardImport:DashcamFragment.kt$import androidx.camera.video.*</ID>
+    <ID>WildcardImport:RecyclerAdapter.kt$import android.widget.Toast.*</ID>
+  </CurrentIssues>
+</SmellBaseline>
