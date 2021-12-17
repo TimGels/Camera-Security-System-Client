@@ -61,24 +61,25 @@ class DashcamGalleryFragment : Fragment() {
         val videoArray = ArrayList<Video>()
         var index = 0
 
-        while (index < files.size) {
-            try{
-                val currentFile = files[index]
-                val path = currentFile.path
-                retriever.setDataSource(path)
+        if (files !== null) {
+            while (index < files.size) {
+                try {
+                    val currentFile = files[index]
+                    val path = currentFile.path
+                    retriever.setDataSource(path)
 
-                val embedPic = retriever.getScaledFrameAtTime(0,0,256,256)
+                    val embedPic = retriever.getScaledFrameAtTime(0, 0, 256, 256)
 
-                videoArray.add(Video(path,embedPic))
-            }catch (e : Exception){
-                Log.e("Thumbnail retriever: ", "$e")
-            }finally {
-                index++
+                    videoArray.add(Video(path, embedPic))
+                } catch (e: Exception) {
+                    Log.e("Thumbnail retriever: ", "$e")
+                } finally {
+                    index++
+                }
             }
         }
         val videoAdapter = VideoAdapter(requireContext(), videoArray, requireActivity())
         recyclerView.adapter = videoAdapter
-
     }
 
 
