@@ -5,11 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -18,6 +20,9 @@ import com.camerasecuritysystem.client.R
 import com.camerasecuritysystem.client.VideoPlayerActivity
 import com.camerasecuritysystem.client.models.Video
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class VideoAdapter(
@@ -36,15 +41,25 @@ class VideoAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        GlideApp.with(context).load(videos?.get(position)?.thumbnail)
-            .placeholder(R.color.black)
-            .dontAnimate()
-            .diskCacheStrategy(DiskCacheStrategy.ALL).thumbnail(0.25f)
-            .into(holder.image)
+        //Load the thumbnails if present
+        if (videos?.get(position)?.thumbnail !== null) {
+            holder.image.scaleX = 1F
+            holder.image.scaleY = 1F
+
+            GlideApp.with(context).load(videos?.get(position)?.thumbnail)
+                .placeholder(R.color.black)
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.ALL).thumbnail(0.25f)
+                .into(holder.image)
+        }
+
+        //Set the date of the video
+        holder.dateText.text = SimpleDateFormat("dd/MM/yy HH:mm:ss").format(Date(File(videos?.get(position)?.path).lastModified()))
 
         var deleteButton = activity.findViewById<ImageButton>(R.id.delete_btn)
         var shareButton = activity.findViewById<ImageButton>(R.id.share_btn)
 
+        //Open the video on click
         holder.image.setOnClickListener {
 
             if (isSelectMode) {
@@ -71,6 +86,7 @@ class VideoAdapter(
             }
         }
 
+        //Start selected mode on long press
         holder.image.setOnLongClickListener {
 
             isSelectMode = true
@@ -94,6 +110,7 @@ class VideoAdapter(
             true
         }
 
+        //Delete selected items
         deleteButton.setOnClickListener {
 
             for (video in selectedItems) {
@@ -114,6 +131,7 @@ class VideoAdapter(
             shareButton.visibility = View.INVISIBLE
         }
 
+        //share selected items
         shareButton.setOnClickListener {
             try {
 
@@ -125,8 +143,8 @@ class VideoAdapter(
 
                 for (video in videosToSend) {
 
+                    //Get uri of file
                     val file = File(video.path)
-
                     if (file.exists()) {
                         val uri = FileProvider.getUriForFile(
                             context,
@@ -137,6 +155,7 @@ class VideoAdapter(
                     }
                 }
 
+                //Build and start share intent
                 val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 intent.setType("*/*")
@@ -162,12 +181,15 @@ class VideoAdapter(
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        //Define the variables of the Viewholder
         var image: ImageView
         var overlay: ImageView
+        var dateText: TextView
 
         init {
             image = itemView.findViewById(R.id.cover_image)
             overlay = itemView.findViewById(R.id.overlay)
+            dateText = itemView.findViewById(R.id.date)
         }
     }
 }

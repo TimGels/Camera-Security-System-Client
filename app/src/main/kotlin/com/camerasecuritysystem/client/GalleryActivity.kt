@@ -24,7 +24,6 @@ class GalleryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gallery)
-//        supportActionBar?.hide()
         supportActionBar?.hide()
 
         tabLayout = findViewById(R.id.tab_layout)

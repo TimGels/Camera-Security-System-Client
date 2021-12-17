@@ -1,5 +1,6 @@
 package com.camerasecuritysystem.client.gallery
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.ThumbnailUtils
 import android.os.Build
@@ -19,6 +20,10 @@ import com.camerasecuritysystem.client.R
 import com.camerasecuritysystem.client.models.Video
 import java.io.File
 import android.media.MediaMetadataRetriever
+import androidx.core.content.FileProvider
+import com.camerasecuritysystem.client.BuildConfig
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class DashcamGalleryFragment : Fragment() {
@@ -37,7 +42,6 @@ class DashcamGalleryFragment : Fragment() {
         recyclerView = root.findViewById(R.id.recyclerView)
         recyclerViewLayoutManager = GridLayoutManager(context, 3)
         recyclerView.layoutManager = recyclerViewLayoutManager
-
 
         return root
     }
@@ -58,7 +62,7 @@ class DashcamGalleryFragment : Fragment() {
         val files = directory.listFiles()
         val retriever = MediaMetadataRetriever()
 
-        val videoArray = ArrayList<Video>()
+        var videoArray = ArrayList<Video>()
         var index = 0
 
         if (files !== null) {
@@ -68,7 +72,12 @@ class DashcamGalleryFragment : Fragment() {
                     val path = currentFile.path
                     retriever.setDataSource(path)
 
-                    val embedPic = retriever.getScaledFrameAtTime(0, 0, 256, 256)
+                    var embedPic: Bitmap? = null
+
+                    //API level 29 or higher required for generating thumbnails. Otherwise default thumbnail will be used.
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        embedPic = retriever.getScaledFrameAtTime(0, 0, 256, 256)
+                    }
 
                     videoArray.add(Video(path, embedPic))
                 } catch (e: Exception) {
@@ -77,6 +86,7 @@ class DashcamGalleryFragment : Fragment() {
                     index++
                 }
             }
+            videoArray= ArrayList(videoArray.asReversed())
         }
         val videoAdapter = VideoAdapter(requireContext(), videoArray, requireActivity())
         recyclerView.adapter = videoAdapter
