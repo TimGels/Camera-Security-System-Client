@@ -35,7 +35,8 @@
     <string name="err_must_be_number">%1$s must be a number!</string>
     <string name="err_at_least">%1$s must be %2$d at minimum!</string>
     <string name="err_at_most">%1$s must be %2$d as maximum!</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Text for share Intent-->
     <string name="share_text">This video was shared with the CameraSecuritySystem app!</string>
+    <string name="title_activity_gallery">Gallery</string>
 </resources>

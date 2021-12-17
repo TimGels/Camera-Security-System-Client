@@ -25,7 +25,8 @@
             android:exported="false" />
         <activity
             android:name=".GalleryActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_activity_gallery"/>
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
@@ -51,5 +52,4 @@
                 android:resource="@xml/provider_paths" />
         </provider>
     </application>
-
 </manifest>
