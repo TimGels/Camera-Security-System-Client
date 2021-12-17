@@ -8,10 +8,10 @@ import android.text.TextWatcher
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.camerasecuritysystem.client.databinding.ActivitySettingsBinding
+import com.camerasecuritysystem.client.models.ConnectionState
 import com.camerasecuritysystem.client.models.ServerConnection
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class SettingsActivity : AppCompatActivity(),
     ConnectDialog.ConnectDialogListener {
@@ -21,6 +21,7 @@ class SettingsActivity : AppCompatActivity(),
     private var keyStore = KeyStoreHelper("connectToServer")
 
     lateinit var connectionLiveData: ConnectionLiveData
+    lateinit var serverLiveData: ServerLiveData
 
     private var isFragmentDurationValid: Boolean = false
 
@@ -31,8 +32,7 @@ class SettingsActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
 
         binding = ActivitySettingsBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding.root)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -53,54 +53,105 @@ class SettingsActivity : AppCompatActivity(),
             finish()
         }
 
+        // Used in the connectBtn onClickListener and connectionLiveData observer
+        val context = this.applicationContext
+
         binding.connectBtn.setOnClickListener {
-            val context = this.applicationContext
-
-            //Try to setup a connection
-            GlobalScope.launch {
-                try {
-                    val connection = ServerConnection.getInstance()
-                    if (!connection.isConnected()){
-                        connection.connectIfPossible(context)
-
-                        Log.e("Connection", "Connecting is possible: ${connection.connectIfPossible(context)}")
-                    }else{
-                        Log.e("Connection", "Already connected")
-                    }
-
-                } catch (e: Exception) {
-                    Log.e("CONNECTION ERROR", e.message.toString())
-                }
+            if (serverLiveData.value == null) {
+                Log.e("connectOnclick", "ConnectBtn clicked with no state!")
+            } else if (serverLiveData.value == ConnectionState.CLOSED ||
+                serverLiveData.value == ConnectionState.NO_CREDENTIALS
+            ) {
+                // Setup a connection.
+                ServerConnection.getInstance().connectIfPossible(context)
+            } else if (serverLiveData.value == ConnectionState.CONNECTED) {
+                // Close the connection.
+                ServerConnection.getInstance().close()
             }
         }
+
+        serverLiveData = ServerLiveData()
+        serverLiveData.observe(this) { state ->
+            Log.e("SERVERCONN", "state: $state")
+            updateUI()
+        }
+
         initializeUISettings()
+
         connectionLiveData = ConnectionLiveData(this)
         connectionLiveData.observe(this, { isNetworkAvailable ->
-            Log.e("NETWORK", "Connected = $isNetworkAvailable")
+            Log.e("NETWORK", "hasInternet = $isNetworkAvailable")
+
+            // TODO: Check for autostart==true
+            if (serverLiveData.value == ConnectionState.CLOSED) {
+                ServerConnection.getInstance().connectIfPossible(context)
+            }
+
             updateUI()
         })
         updateUI()
     }
 
     private fun updateUI() {
+        val hasInternet = connectionLiveData.value
+        val connectionState = serverLiveData.value
 
-        val isNetworkAvailable = connectionLiveData.value
-
-        if (isNetworkAvailable == null || !isNetworkAvailable) {
-            binding.connectBtn.isClickable = false
-            binding.connectBtn.isEnabled = false
-            binding.connectBtn.backgroundTintList =
-                getColorStateList(R.color.cardview_dark_background)
-
-            binding.connectBtn.text = "No internet"
-        } else if (isNetworkAvailable == true) {
-            binding.connectBtn.isClickable = true
-            binding.connectBtn.isEnabled = true
-            binding.connectBtn.backgroundTintList =
-                getColorStateList(R.color.design_default_color_primary)
-            binding.connectBtn.text = "Connect"
+        if (hasInternet == null || !hasInternet) {
+            setNoInternet()
+        } else if (hasInternet == true) {
+            if (connectionState != null) {
+                when (connectionState) {
+                    ConnectionState.NO_CREDENTIALS -> {
+                        // Credentials cannot be cleared once entered, only updated.
+                        binding.connectBtn.isVisible = false
+                    }
+                    ConnectionState.CLOSED -> {
+                        setConnect()
+                    }
+                    ConnectionState.CONNECTING -> {
+                        setConnecting()
+                    }
+                    ConnectionState.CONNECTED -> {
+                        setConnected()
+                    }
+                }
+            } else {
+                Log.e("state", "NULL")
+                setConnect()
+            }
         }
+    }
 
+    private fun setNoInternet() {
+        binding.connectBtn.isClickable = false
+        binding.connectBtn.isEnabled = false
+        binding.connectBtn.backgroundTintList =
+            getColorStateList(R.color.design_default_color_error)
+        binding.connectBtn.text = "No internet"
+    }
+
+    private fun setConnect() {
+        binding.connectBtn.isClickable = true
+        binding.connectBtn.isEnabled = true
+        binding.connectBtn.backgroundTintList =
+            getColorStateList(R.color.design_default_color_primary)
+        binding.connectBtn.text = "Connect"
+    }
+
+    private fun setConnecting() {
+        binding.connectBtn.isClickable = false
+        binding.connectBtn.isEnabled = false
+        binding.connectBtn.backgroundTintList =
+            getColorStateList(R.color.cardview_dark_background)
+        binding.connectBtn.text = "Connecting"
+    }
+
+    private fun setConnected() {
+        binding.connectBtn.isClickable = true
+        binding.connectBtn.isEnabled = true
+        binding.connectBtn.backgroundTintList =
+            getColorStateList(R.color.design_default_color_primary_dark)
+        binding.connectBtn.text = "Disconnect"
     }
 
     private fun openDialog() {
@@ -171,7 +222,6 @@ class SettingsActivity : AppCompatActivity(),
         return true
     }
 
-
     private fun saveSettings() {
         if (!isFragmentDurationValid) {
             Toast.makeText(
@@ -200,6 +250,11 @@ class SettingsActivity : AppCompatActivity(),
     }
 
     override fun applyTexts(cameraID: String, port: String, ipAddress: String, password: String) {
+        // NO_CREDENTIAL state can only happen first time around.
+        if (serverLiveData.value == ConnectionState.NO_CREDENTIALS) {
+            binding.connectBtn.isVisible = true
+            setConnect()
+        }
 
         // Encrypt the password
         val pair = keyStore.encryptData(password)
@@ -215,9 +270,7 @@ class SettingsActivity : AppCompatActivity(),
         ).apply()
 
         sharedPreferences.edit().putString(resources.getString(R.string.port), port).apply()
-
         sharedPreferences.edit().putString(resources.getString(R.string.ip_address), ipAddress).apply()
-
         sharedPreferences.edit().putString(resources.getString(R.string.camera_id), cameraID).apply()
     }
 }

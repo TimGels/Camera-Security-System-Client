@@ -16,8 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.camerasecuritysystem.client.databinding.ActivityMainBinding
 import com.camerasecuritysystem.client.models.ServerConnection
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,14 +43,12 @@ class MainActivity : AppCompatActivity() {
 
         connectionLiveData = ConnectionLiveData(this)
         connectionLiveData.observe(this, { isNetworkAvailable ->
-            Log.e("NETWORK", "Connected = $isNetworkAvailable")
+            Log.e("NETWORK", "hasInternet = $isNetworkAvailable")
 
+            // TODO: Check for autostart==true
             if (isNetworkAvailable) {
-                GlobalScope.launch {
-                    ServerConnection.getInstance().connectIfPossible(context)
-                }
+                ServerConnection.getInstance().connectIfPossible(context)
             }
-
         })
     }
 
