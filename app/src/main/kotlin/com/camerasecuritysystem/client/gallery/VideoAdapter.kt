@@ -21,11 +21,11 @@ import java.io.File
 
 
 class VideoAdapter(
-    private val context: Context, private val videos: ArrayList<Video>,
+    private val context: Context, private val videos: ArrayList<Video>?,
     private val activity: Activity
 ) : RecyclerView.Adapter<VideoAdapter.ViewHolder>() {
 
-    private val videoList: ArrayList<Video> = videos
+    private val videoList: ArrayList<Video>? = videos
     private var isSelectMode = false
     private var selectedItems = ArrayList<Video>()
 
@@ -36,7 +36,7 @@ class VideoAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        GlideApp.with(context).load(videos[position].thumbnail)
+        GlideApp.with(context).load(videos?.get(position)?.thumbnail)
             .placeholder(R.color.black)
             .dontAnimate()
             .diskCacheStrategy(DiskCacheStrategy.ALL).thumbnail(0.25f)
@@ -52,12 +52,12 @@ class VideoAdapter(
                 deleteButton.visibility = View.VISIBLE
                 shareButton.visibility = View.VISIBLE
 
-                if (selectedItems.contains(videoList[position])) {
+                if (selectedItems.contains(videoList?.get(position))) {
                     holder.overlay.setBackgroundColor(Color.TRANSPARENT)
-                    selectedItems.remove(videoList[position])
+                    selectedItems.remove(videoList?.get(position))
                 } else {
                     holder.overlay.setBackgroundResource(R.color.purple_500)
-                    selectedItems.add(videoList[position])
+                    selectedItems.add(videoList!![position])
                 }
                 if (selectedItems.size == 0) {
                     isSelectMode = false
@@ -66,7 +66,7 @@ class VideoAdapter(
                 }
             } else {
                 val intent = Intent(context, VideoPlayerActivity::class.java)
-                intent.putExtra("videoPath", videos[position].path)
+                intent.putExtra("videoPath", videos?.get(position)?.path)
                 activity.startActivity(intent)
             }
         }
@@ -77,16 +77,17 @@ class VideoAdapter(
             deleteButton.visibility = View.VISIBLE
             shareButton.visibility = View.VISIBLE
 
-            if (selectedItems.contains(videoList[position])) {
+            if (selectedItems.contains(videoList?.get(position))) {
                 holder.overlay.setBackgroundColor(Color.TRANSPARENT)
-                selectedItems.remove(videoList[position])
+                selectedItems.remove(videoList?.get(position))
             } else {
                 holder.overlay.setBackgroundResource(R.color.purple_500)
-                selectedItems.add(videoList[position])
+                videoList?.get(position)?.let { it1 -> selectedItems.add(it1) }
             }
 
             if (selectedItems.size == 0) {
                 isSelectMode = false
+                holder.overlay.setBackgroundColor(Color.TRANSPARENT)
                 deleteButton.visibility = View.INVISIBLE
                 shareButton.visibility = View.INVISIBLE
             }
@@ -97,21 +98,17 @@ class VideoAdapter(
 
             for (video in selectedItems) {
 
-                //Remove from videoList
-                videoList.remove(video)
-
                 //Remove from internal storage
                 val dashcamDir = "${context.filesDir}/dashcam/"
-                val fileToDelete = File(dashcamDir, video.path.substring(video.path.lastIndexOf("/")+1))
+                val fileToDelete =
+                    File(dashcamDir, video.path.substring(video.path.lastIndexOf("/") + 1))
                 fileToDelete.delete()
-
-                //Remove from selectedItems
-                selectedItems.remove(video)
-
-                val view = activity.findViewById<RecyclerView>(R.id.recyclerView)
-
-
             }
+
+            videoList?.removeAll(selectedItems)
+            selectedItems.clear()
+            notifyDataSetChanged()
+            holder.overlay.setBackgroundColor(Color.TRANSPARENT)
             isSelectMode = false
             deleteButton.visibility = View.INVISIBLE
             shareButton.visibility = View.INVISIBLE
@@ -140,7 +137,7 @@ class VideoAdapter(
                     }
                 }
 
-                val intent = Intent(Intent.ACTION_SEND)
+                val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 intent.setType("*/*")
                 intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris)
@@ -157,9 +154,11 @@ class VideoAdapter(
     }
 
     override fun getItemCount(): Int {
-        return videos.size
+        if (videos != null) {
+            return videos.size
+        }
+        return 0
     }
-
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -171,6 +170,4 @@ class VideoAdapter(
             overlay = itemView.findViewById(R.id.overlay)
         }
     }
-
-
 }
