@@ -96,6 +96,9 @@ dependencies {
     }
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
     kapt 'androidx.annotation:annotation:1.3.0'
+
+    //Mailjet
+    implementation "com.mailjet:mailjet-client:4.2.0"
 }
 
 repositories {

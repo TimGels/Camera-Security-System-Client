@@ -14,11 +14,12 @@ import com.camerasecuritysystem.client.models.ConnectionState
 import com.camerasecuritysystem.client.models.ServerConnection
 
 class SettingsActivity : AppCompatActivity(),
-    ConnectDialog.ConnectDialogListener {
+    ConnectDialog.ConnectDialogListener, MailDialog.MailDialogListener {
 
     private lateinit var binding: ActivitySettingsBinding
 
-    private var keyStore = KeyStoreHelper("connectToServer")
+    private var keyStoreServer = KeyStoreHelper("connectToServer")
+    private var keyStoreMail = KeyStoreHelper("MailAPI")
 
     lateinit var connectionLiveData: ConnectionLiveData
     lateinit var serverLiveData: ServerLiveData
@@ -42,7 +43,7 @@ class SettingsActivity : AppCompatActivity(),
         pwdIV = sharedPreferences.getString(resources.getString(R.string.pwdIVByte), "")
 
         binding.textViewConnectionSettings.setOnClickListener {
-            openDialog()
+            openConnectionDialog()
         }
 
         binding.saveButton.setOnClickListener {
@@ -51,6 +52,10 @@ class SettingsActivity : AppCompatActivity(),
 
         binding.cancelButton.setOnClickListener {
             finish()
+        }
+
+        binding.mailSettingsButton.setOnClickListener{
+            openMailDialog()
         }
 
         // Used in the connectBtn onClickListener and connectionLiveData observer
@@ -154,9 +159,14 @@ class SettingsActivity : AppCompatActivity(),
         binding.connectBtn.text = "Disconnect"
     }
 
-    private fun openDialog() {
+    private fun openConnectionDialog() {
         val connectDialog = ConnectDialog()
         connectDialog.show(supportFragmentManager, "connect dialog")
+    }
+
+    private fun openMailDialog(){
+        val mailDialog = MailDialog()
+        mailDialog.show(supportFragmentManager, "mail dialog")
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -257,7 +267,7 @@ class SettingsActivity : AppCompatActivity(),
         }
 
         // Encrypt the password
-        val pair = keyStore.encryptData(password)
+        val pair = keyStoreServer.encryptData(password)
 
         // Store the IV bytes encrypted and the password
         sharedPreferences.edit().putString(
@@ -272,5 +282,36 @@ class SettingsActivity : AppCompatActivity(),
         sharedPreferences.edit().putString(resources.getString(R.string.port), port).apply()
         sharedPreferences.edit().putString(resources.getString(R.string.ip_address), ipAddress).apply()
         sharedPreferences.edit().putString(resources.getString(R.string.camera_id), cameraID).apply()
+    }
+
+    override fun applyTexts(apiKey: String, apiSecret: String, email: String) {
+        // Encrypt the key
+        val pairKey = keyStoreMail.encryptData(apiKey)
+
+        // Encrypt the secret
+        val pairSecret = keyStoreMail.encryptData(apiKey)
+
+        // Store the IV bytes and the key and secret
+        sharedPreferences.edit().putString(
+            resources.getString(R.string.mailKeyIVByte),
+            pairKey.first.toString(Charsets.ISO_8859_1)
+        ).apply()
+
+        sharedPreferences.edit().putString(
+            resources.getString(R.string.mail_key),
+            pairKey.second.toString(Charsets.ISO_8859_1)
+        ).apply()
+
+        sharedPreferences.edit().putString(
+            resources.getString(R.string.secretIVByte),
+            pairSecret.first.toString(Charsets.ISO_8859_1)
+        ).apply()
+
+        sharedPreferences.edit().putString(
+            resources.getString(R.string.mail_secret),
+            pairSecret.second.toString(Charsets.ISO_8859_1)
+        ).apply()
+
+        sharedPreferences.edit().putString(resources.getString(R.string.email), email).apply()
     }
 }
