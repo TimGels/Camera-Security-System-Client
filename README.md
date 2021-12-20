@@ -25,6 +25,11 @@ The following steps are needed to use detekt on your local Windows system.
 
 ## Checking code formatting in Android Studio
 1. Install the plugin `Detekt` from the Jetbrains [marketplace](https://plugins.jetbrains.com/plugin/10761-detekt)
-2. Configure the plugin by enabling both `Enable Detekt` and `Enable formatting (ktlint) rules`
+2. After installing the plugin, enable both `Enable Detekt` and `Enable formatting (ktlint) rules`
 
     ![afbeelding](https://user-images.githubusercontent.com/43609220/146745614-d3c36a9f-77f4-4ab6-8d3c-126aa1020937.png)
+3. And lastly, fill in the `Configuration Files` field with the path of the detekt configuration file.
+   
+   Example:
+   
+       D:\Android\AndroidStudioProjects\Camera-Security-System-Client\config\detekt\detekt.yml
