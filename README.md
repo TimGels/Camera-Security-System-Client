@@ -19,3 +19,9 @@ The following steps are needed to use detekt on your local Windows system.
 5. Close all shells such as PowerShell or Command Prompt
 6. Open a shell and head to the project directory root (`Camera-Security-System-Client`)
 7. Test if it works by running: `.\gradlew.bat detekt`
+
+## Checking code formatting in Android Studio
+1. Install the plugin `Detekt` from the Jetbrains [marketplace](https://plugins.jetbrains.com/plugin/10761-detekt)
+2. Configure the plugin by enabling both `Enable Detekt` and `Enable formatting (ktlint) rules`
+
+    ![afbeelding](https://user-images.githubusercontent.com/43609220/146745614-d3c36a9f-77f4-4ab6-8d3c-126aa1020937.png)
