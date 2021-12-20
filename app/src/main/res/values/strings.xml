@@ -10,6 +10,11 @@
     <string name="port">port</string>
     <string name="ip_address">ip_address</string>
     <string name="camera_id">camera_id</string>
+    <string name="mail_key">mail_key</string>
+    <string name="mail_secret">mail_secret</string>
+    <string name="email">email</string>
+    <string name="mailKeyIVByte">mailKeyIVByte</string>
+    <string name="secretIVByte">secretIVByte</string>
 
     <string name="camera_id_title">Camera ID</string>
     <string name="port_title">Port</string>
@@ -41,4 +46,5 @@
     <string name="title_activity_gallery">Gallery</string>
 
     <string name="tap_to_edit_connection_settings">Tap to edit connection settings</string>
+    <string name="mailjet_explanation">To use the email option, create a Mailjet account on Mailjet.com and follow the steps. You can enter your API key, API secret and your e-mail address in the fields below.</string>
 </resources>

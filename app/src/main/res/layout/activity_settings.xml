@@ -82,4 +82,9 @@
             android:layout_alignParentEnd="true"
             android:text="@string/save_button" />
     </RelativeLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mailSettingsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mail Settings"/>
 </LinearLayout>
