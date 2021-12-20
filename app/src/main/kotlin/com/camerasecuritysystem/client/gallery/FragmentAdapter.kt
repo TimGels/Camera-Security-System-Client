@@ -13,13 +13,11 @@ class FragmentAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
     }
 
     override fun createFragment(position: Int): Fragment {
-        when (position) {
-            1 -> return IPCameraGalleryFragment()
-            2 -> return MotionCameraGalleryFragment()
-            else -> {
-
-            }
+        return when (position) {
+            0 -> DashcamGalleryFragment()
+            1 -> IPCameraGalleryFragment()
+            2 -> MotionCameraGalleryFragment()
+            else -> throw IllegalArgumentException("Not expecting $position!")
         }
-        return DashcamGalleryFragment()
     }
 }
