@@ -165,7 +165,7 @@ class SettingsActivity : AppCompatActivity(),
     }
 
     private fun openMailDialog(){
-        val mailDialog = MailDialog()
+        val mailDialog = MailDialog(applicationContext)
         mailDialog.show(supportFragmentManager, "mail dialog")
     }
 

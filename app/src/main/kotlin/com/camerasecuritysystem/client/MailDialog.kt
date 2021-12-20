@@ -8,14 +8,16 @@ import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.core.widget.doOnTextChanged
 import com.camerasecuritysystem.client.databinding.MailDialogLayoutBinding
 import java.lang.Exception
 
-class MailDialog : AppCompatDialogFragment() {
+class MailDialog(context: Context) : AppCompatDialogFragment() {
 
     private var listener: MailDialogListener? = null
 
-    private var keyStore = KeyStoreHelper("MailAPI")
+    private var keyStore =
+        KeyStoreHelper(context.resources.getString(R.string.keyStoreAliasMail))
 
     private lateinit var binding: MailDialogLayoutBinding
 
@@ -27,6 +29,11 @@ class MailDialog : AppCompatDialogFragment() {
 
     private var okButton: Button? = null
 
+    //Descriptor of input field
+    private lateinit var keyString: String
+    private lateinit var secretString: String
+    private lateinit var emailString: String
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = requireActivity().layoutInflater
         binding = MailDialogLayoutBinding.inflate(inflater)
@@ -35,6 +42,11 @@ class MailDialog : AppCompatDialogFragment() {
         val editTextKey = binding.apiKeyText
         val editTextSecret = binding.apiSecretText
         val editTextEmail = binding.emailText
+
+        //Input field strings
+        this.keyString = resources.getString(R.string.mail_key_string)
+        this.secretString = resources.getString(R.string.mail_secret_string)
+        this.emailString = resources.getString(R.string.mail_email_string)
 
         //Get access to all shared preferences
         sharedPreferences = requireContext().getSharedPreferences(
@@ -64,7 +76,6 @@ class MailDialog : AppCompatDialogFragment() {
                     ivByteKey.toByteArray(Charsets.ISO_8859_1),
                     apiKeyEnc.toByteArray(Charsets.ISO_8859_1)
                 )
-
                 //Set the password text in the input field
                 editTextKey.setText(keyText)
                 keyValid = true
@@ -116,9 +127,140 @@ class MailDialog : AppCompatDialogFragment() {
 
         dialog.setOnShowListener {
             this.okButton = (it as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE)
+
+            //Set the initial values for the input fields and update the OK button
+            if (email != null) {
+                binding.emailText.setText(email)
+                emailValid = true
+            } else {
+                binding.emailLayout.error =
+                    String.format(resources.getString(R.string.err_not_empty), emailString)
+                setOkButton(okButton)
+            }
+
+            //Set the initial values for the input fields and update the OK button
+            if (ivByteKey != null && apiKeyEnc != null) {
+
+                //Decrypt the IV byte and the key
+                try {
+                    val keyText = keyStore.decryptData(
+                        ivByteKey.toByteArray(Charsets.ISO_8859_1),
+                        apiKeyEnc.toByteArray(Charsets.ISO_8859_1)
+                    )
+
+                    //Set the password text in the input field
+                    editTextKey.setText(keyText)
+                    keyValid = true
+
+                } catch (e: Exception) {
+                    Log.e("EXCEPTION", "error: ", e)
+                    setOkButton(okButton)
+                }
+            } else {
+                binding.apiKeyLayout.error =
+                    String.format(resources.getString(R.string.err_not_empty), keyString)
+                setOkButton(okButton)
+            }
+
+            //Set the initial values for the input fields and update the OK button
+            if (ivByteSecret != null && apiSecretEnc != null) {
+
+                //Decrypt the IV byte and the secret
+                try {
+                    val secretText = keyStore.decryptData(
+                        ivByteSecret.toByteArray(Charsets.ISO_8859_1),
+                        apiSecretEnc.toByteArray(Charsets.ISO_8859_1)
+                    )
+
+                    //Set the password text in the input field
+                    editTextKey.setText(secretText)
+                    keyValid = true
+
+                } catch (e: Exception) {
+                    Log.e("EXCEPTION", "error: ", e)
+                    setOkButton(okButton)
+                }
+            } else {
+                binding.apiSecretLayout.error =
+                    String.format(resources.getString(R.string.err_not_empty), secretString)
+                setOkButton(okButton)
+            }
+
+            // Add text change handlers used for input validation
+            binding.apiKeyText.doOnTextChanged { text, _, _, _ ->
+                keyValid = validateKey(text.toString())
+                setOkButton(okButton)
+            }
+            binding.apiSecretText.doOnTextChanged { text, _, _, _ ->
+                secretValid = validateSecret(text.toString())
+                setOkButton(okButton)
+            }
+            binding.emailText.doOnTextChanged { text, _, _, _ ->
+                emailValid = validateEmail(text.toString())
+                setOkButton(okButton)
+            }
+        }
+        return dialog
+    }
+
+    private fun validateKey(key: String): Boolean {
+        var layout = binding.apiKeyLayout
+        if (key.length < 32) {
+            layout.error = String.format(resources.getString(R.string.err_too_short), keyString)
+            return false
+        }
+        if (key.length > 32) {
+            layout.error = String.format(resources.getString(R.string.err_too_long), secretString)
+            return false
+        }
+        if (key.isEmpty()) {
+            layout.error = String.format(resources.getString(R.string.err_not_empty), keyString)
+            return false
+        }
+        //TODO check numbers and letters
+
+        layout.error = null
+        return true
+    }
+
+    private fun validateSecret(secret: String): Boolean {
+        var layout = binding.apiSecretLayout
+        if (secret.length < 32) {
+            layout.error = String.format(resources.getString(R.string.err_too_short), secretString)
+            return false
+        }
+        if (secret.length > 32) {
+            layout.error = String.format(
+                resources.getString(R.string.err_too_long, secretString))
+                return false
+        }
+        if (secret.isEmpty()) {
+            layout.error = String.format(resources.getString(R.string.err_not_empty), secretString)
+            return false
+        }
+        //TODO check numbers and letters
+        layout.error = null
+        return true
+    }
+
+    private fun validateEmail(email: String): Boolean {
+        var layout = binding.emailLayout
+
+        if (email.isEmpty()) {
+            layout.error = String.format(resources.getString(R.string.err_not_empty), email)
+            return false
         }
 
-        return dialog
+        if (!email.contains("@")) {
+            layout.error = String.format(resources.getString(R.string.err_email_invalid), email)
+            return false
+        }
+        layout.error = null
+        return true
+    }
+
+    private fun setOkButton(okButton: Button?) {
+        okButton?.isEnabled = (keyValid && secretValid && emailValid)
     }
 
     /**

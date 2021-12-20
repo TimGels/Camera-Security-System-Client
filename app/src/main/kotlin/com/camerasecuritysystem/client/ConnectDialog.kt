@@ -17,7 +17,7 @@ class ConnectDialog : AppCompatDialogFragment() {
 
     private var listener: ConnectDialogListener? = null
 
-    private var keyStore = KeyStoreHelper("connectToServer")
+    private var keyStore = KeyStoreHelper(resources.getString(R.string.keyStoreAliasServer))
 
     private lateinit var sharedPreferences: SharedPreferences
 

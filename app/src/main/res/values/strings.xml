@@ -29,6 +29,10 @@
     <string name="save_button">Save</string>
     <string name="cancel_button">Cancel</string>
 
+    <!-- Aliases-->
+    <string name="keyStoreAliasMail">MailAPI</string>
+    <string name="keyStoreAliasServer">connectToServer</string>
+
     <string name="capture">Capture</string>
     <string name="camera">Camera</string>
     <string name="stop">stop</string>
@@ -37,14 +41,22 @@
 
     <!-- Validation errors -->
     <string name="err_not_empty">%1$s cannot be empty!</string>
+    <string name="err_email_invalid">%1$s is invalid!</string>
     <string name="err_must_be_number">%1$s must be a number!</string>
     <string name="err_at_least">%1$s must be %2$d at minimum!</string>
     <string name="err_at_most">%1$s must be %2$d as maximum!</string>
+    <string name="err_too_short">%1$s is too short!</string>
+    <string name="err_too_long">%1$s is too long!</string>
 
     <!-- Text for share Intent-->
     <string name="share_text">This video was shared with the CameraSecuritySystem app!</string>
     <string name="title_activity_gallery">Gallery</string>
 
     <string name="tap_to_edit_connection_settings">Tap to edit connection settings</string>
+
+    <!-- Email related-->
     <string name="mailjet_explanation">To use the email option, create a Mailjet account on Mailjet.com and follow the steps. You can enter your API key, API secret and your e-mail address in the fields below.</string>
+    <string name="mail_key_string">API Key</string>
+    <string name="mail_secret_string">API Secret</string>
+    <string name="mail_email_string">E-mail address</string>
 </resources>
