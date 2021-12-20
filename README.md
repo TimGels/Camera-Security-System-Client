@@ -1,5 +1,8 @@
 # Camera-Security-System-Client
-
+[![ktlint](https://github.com/TimGels/Camera-Security-System-Client/actions/workflows/ktlint.yml/badge.svg)](https://github.com/TimGels/Camera-Security-System-Client/actions/workflows/ktlint.yml)
+[![Detekt](https://github.com/TimGels/Camera-Security-System-Client/actions/workflows/detekt.yml/badge.svg)](https://github.com/TimGels/Camera-Security-System-Client/actions/workflows/detekt.yml)
+[![Android CI](https://github.com/TimGels/Camera-Security-System-Client/actions/workflows/android.yml/badge.svg)](https://github.com/TimGels/Camera-Security-System-Client/actions/workflows/android.yml)
+ 
 ## Using detekt locally (Windows)
 The following steps are needed to use detekt on your local Windows system.
 1. Install [OpenJDK](https://jdk.java.net/17/)
