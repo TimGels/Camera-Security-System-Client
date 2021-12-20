@@ -1,14 +1,10 @@
 package com.camerasecuritysystem.client.gallery
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.media.ThumbnailUtils
+import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.os.Bundle
-import android.os.CancellationSignal
-import android.provider.MediaStore
 import android.util.Log
-import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,12 +15,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.camerasecuritysystem.client.R
 import com.camerasecuritysystem.client.models.Video
 import java.io.File
-import android.media.MediaMetadataRetriever
-import androidx.core.content.FileProvider
-import com.camerasecuritysystem.client.BuildConfig
-import java.util.*
 import kotlin.collections.ArrayList
 
+const val WIDTH = 256
+const val HEIGHT = 256
+const val SPAN_COUNT = 3
 
 class DashcamGalleryFragment : Fragment() {
 
@@ -33,14 +28,15 @@ class DashcamGalleryFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        var root = inflater.inflate(R.layout.fragment_dashcam_gallery, container, false)
+        val root = inflater.inflate(R.layout.fragment_dashcam_gallery, container, false)
 
         recyclerView = root.findViewById(R.id.recyclerView)
-        recyclerViewLayoutManager = GridLayoutManager(context, 3)
+        recyclerViewLayoutManager = GridLayoutManager(context, SPAN_COUNT)
         recyclerView.layoutManager = recyclerViewLayoutManager
 
         return root
@@ -58,39 +54,48 @@ class DashcamGalleryFragment : Fragment() {
         val path = "${requireContext().filesDir}/dashcam/"
 
         val directory = File(path)
-
         val files = directory.listFiles()
-        val retriever = MediaMetadataRetriever()
 
-        var videoArray = ArrayList<Video>()
-        var index = 0
+        val videoArray = fileListToVideoList(files, MediaMetadataRetriever())
 
-        if (files !== null) {
-            while (index < files.size) {
-                try {
-                    val currentFile = files[index]
-                    val path = currentFile.path
-                    retriever.setDataSource(path)
-
-                    var embedPic: Bitmap? = null
-
-                    //API level 29 or higher required for generating thumbnails. Otherwise default thumbnail will be used.
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        embedPic = retriever.getScaledFrameAtTime(0, 0, 256, 256)
-                    }
-
-                    videoArray.add(Video(path, embedPic))
-                } catch (e: Exception) {
-                    Log.e("Thumbnail retriever: ", "$e")
-                } finally {
-                    index++
-                }
-            }
-            videoArray= ArrayList(videoArray.asReversed())
-        }
         val videoAdapter = VideoAdapter(requireContext(), videoArray, requireActivity())
         recyclerView.adapter = videoAdapter
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun fileListToVideoList(
+        fileList: Array<File>?,
+        retriever: MediaMetadataRetriever
+    ): ArrayList<Video> {
 
+        if (fileList == null) {
+            return ArrayList()
+        }
+
+        val videoArray = ArrayList<Video>()
+        var index = 0
+
+        while (index < fileList.size) {
+            try {
+                val currentFile = fileList[index]
+                val path = currentFile.path
+                retriever.setDataSource(path)
+
+                var embedPic: Bitmap? = null
+
+                // API level 29 or higher required for generating thumbnails. Otherwise default thumbnail will be used.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    embedPic = retriever.getScaledFrameAtTime(0, 0, WIDTH, HEIGHT)
+                }
+
+                videoArray.add(Video(path, embedPic))
+            } catch (e: Exception) {
+                Log.e("Thumbnail retriever: ", "$e")
+            } finally {
+                index++
+            }
+        }
+
+        return ArrayList(videoArray.asReversed())
+    }
 }

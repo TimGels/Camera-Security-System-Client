@@ -4,10 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
-import android.view.View
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -21,7 +18,6 @@ import com.camerasecuritysystem.client.databinding.ActivityMainBinding
 import com.camerasecuritysystem.client.models.ServerConnection
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -58,8 +54,6 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-
-
     }
 
     override fun onStart() {
@@ -102,5 +96,4 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
-
 }
