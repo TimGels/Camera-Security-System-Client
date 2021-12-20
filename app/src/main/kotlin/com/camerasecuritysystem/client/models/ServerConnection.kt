@@ -178,7 +178,7 @@ class ServerConnection {
         }
     }
 
-    fun isConnected() = webSocketSession != null && state != ConnectionState.CLOSED
+    fun isConnected() = webSocketSession != null && state == ConnectionState.CONNECTED
 
     fun addStateCallback(callback: ((state: ConnectionState) -> Unit)) {
         _listener = callback
@@ -210,16 +210,20 @@ class ServerConnection {
             return
         }
 
+        if (state == ConnectionState.CONNECTING) {
+            Log.e(tag, "Won't connect when connecting!")
+            return
+        }
+
         if (!credentialsEntered(context)) {
             state = ConnectionState.NO_CREDENTIALS
             return
         }
 
+        // If we are here, the user has successfully entered credentials.
         if (state == ConnectionState.NO_CREDENTIALS) {
             _state = ConnectionState.CLOSED // Don't invoke callback
         }
-
-        cassert(webSocketSession == null)
 
         GlobalScope.launch {
             initializeConnection(getCredentials(context))
