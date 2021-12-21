@@ -15,7 +15,6 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.camerasecuritysystem.client.databinding.ActivityMainBinding
-import com.camerasecuritysystem.client.gmail.MailSender
 import com.camerasecuritysystem.client.models.ServerConnection
 
 class MainActivity : AppCompatActivity() {

@@ -23,7 +23,7 @@
 
         android:layout_height="wrap_content"
 
-        android:hint="API Key"
+        android:hint="@string/api_key"
         app:errorEnabled="true"
         app:errorIconDrawable="@null"
         app:layout_constraintBottom_toTopOf="@+id/api_secret_layout"
@@ -45,8 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-
-        android:hint="API Secret"
+        android:hint="@string/api_secret"
         app:errorEnabled="true"
         app:errorIconDrawable="@null"
         app:layout_constraintBottom_toTopOf="@+id/email_layout"
@@ -70,7 +69,7 @@
         android:layout_height="wrap_content"
 
         android:layout_marginTop="16dp"
-        android:hint="E-mail address"
+        android:hint="@string/e_mail_address"
         app:errorEnabled="true"
         app:errorIconDrawable="@null"
         app:layout_constraintEnd_toEndOf="parent"

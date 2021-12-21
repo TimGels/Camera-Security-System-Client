@@ -14,7 +14,8 @@ import com.camerasecuritysystem.client.models.ConnectionState
 import com.camerasecuritysystem.client.models.ServerConnection
 
 class SettingsActivity : AppCompatActivity(),
-    ConnectDialog.ConnectDialogListener, MailDialog.MailDialogListener {
+    ConnectDialog.ConnectDialogListener,
+    MailDialog.MailDialogListener {
 
     private lateinit var binding: ActivitySettingsBinding
 
@@ -54,7 +55,7 @@ class SettingsActivity : AppCompatActivity(),
             finish()
         }
 
-        binding.mailSettingsButton.setOnClickListener{
+        binding.mailSettingsButton.setOnClickListener {
             openMailDialog()
         }
 
@@ -164,7 +165,7 @@ class SettingsActivity : AppCompatActivity(),
         connectDialog.show(supportFragmentManager, "connect dialog")
     }
 
-    private fun openMailDialog(){
+    private fun openMailDialog() {
         val mailDialog = MailDialog(applicationContext)
         mailDialog.show(supportFragmentManager, "mail dialog")
     }
@@ -194,7 +195,6 @@ class SettingsActivity : AppCompatActivity(),
                 isFragmentDurationValid = validateFragmentRecordingLengthElement(s.toString())
             }
         })
-
         isFragmentDurationValid = validateFragmentRecordingLengthElement(fragmentRecordingSeconds)
     }
 
