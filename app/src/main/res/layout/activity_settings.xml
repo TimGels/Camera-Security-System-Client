@@ -22,21 +22,19 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:scrollHorizontally="true"
-
             android:text="@string/tap_to_edit_connection_settings"
             android:layout_marginEnd="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="0dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/connectBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-
             android:backgroundTint="@color/design_default_color_primary"
-            android:text="Connect"
+            android:text="@string/connect"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/connectBox"
@@ -86,11 +84,11 @@
         android:id="@+id/mailSettingsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mail Settings"/>
+        android:text="@string/mail_settings"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/weatherSettingsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Weather settings"/>
+        android:text="@string/weather_settings"/>
 </LinearLayout>

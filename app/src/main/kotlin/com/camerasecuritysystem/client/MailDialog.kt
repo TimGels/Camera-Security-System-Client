@@ -15,6 +15,9 @@ import java.lang.Exception
 import java.lang.NumberFormatException
 import java.util.regex.Pattern
 
+const val KEY_LENGTH = 32
+const val SECRET_LENGTH = 32
+
 class MailDialog(context: Context) : AppCompatDialogFragment() {
 
     private var listener: MailDialogListener? = null
@@ -32,7 +35,7 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
 
     private var okButton: Button? = null
 
-    //Descriptor of input field
+    // Descriptor of input field
     private lateinit var keyString: String
     private lateinit var secretString: String
     private lateinit var emailString: String
@@ -41,23 +44,23 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
         val inflater = requireActivity().layoutInflater
         binding = MailDialogLayoutBinding.inflate(inflater)
 
-        //Get the id of the input fields
+        // Get the id of the input fields
         val editTextKey = binding.apiKeyText
         val editTextSecret = binding.apiSecretText
         val editTextEmail = binding.emailText
 
-        //Input field strings
+        // Input field strings
         this.keyString = resources.getString(R.string.mail_key_string)
         this.secretString = resources.getString(R.string.mail_secret_string)
         this.emailString = resources.getString(R.string.mail_email_string)
 
-        //Get access to all shared preferences
+        // Get access to all shared preferences
         sharedPreferences = requireContext().getSharedPreferences(
             "com.camerasecuritysystem.client",
             Context.MODE_PRIVATE
         )
 
-        //Assign the preferences to variables
+        // Assign the preferences to variables
         val apiKeyEnc =
             sharedPreferences.getString(resources.getString(R.string.mail_key), null)
         val apiSecretEnc =
@@ -70,47 +73,45 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
         val ivByteSecret =
             sharedPreferences.getString(resources.getString(R.string.secretIVByte), null)
 
-        //Decrypt key
+        // Decrypt key
         if (ivByteKey != null && apiKeyEnc != null) {
 
-            //Decrypt the IV byte and the password
+            // Decrypt the IV byte and the password
             try {
                 val keyText = keyStore.decryptData(
                     ivByteKey.toByteArray(Charsets.ISO_8859_1),
                     apiKeyEnc.toByteArray(Charsets.ISO_8859_1)
                 )
-                //Set the password text in the input field
+                // Set the password text in the input field
                 editTextKey.setText(keyText)
                 keyValid = true
-
             } catch (e: Exception) {
                 Log.e("EXCEPTION", "error: ", e)
             }
         }
 
-        //Decrypt secret
+        // Decrypt secret
         if (ivByteSecret != null && apiSecretEnc != null) {
 
-            //Decrypt the IV byte and the secret
+            // Decrypt the IV byte and the secret
             try {
                 val secretText = keyStore.decryptData(
                     ivByteSecret.toByteArray(Charsets.ISO_8859_1),
                     apiSecretEnc.toByteArray(Charsets.ISO_8859_1)
                 )
 
-                //Set the password text in the input field
+                // Set the password text in the input field
                 editTextSecret.setText(secretText)
                 secretValid = true
-
             } catch (e: Exception) {
                 Log.e("EXCEPTION", "error: ", e)
             }
         }
 
-        //Set the email text
+        // Set the email text
         editTextEmail.setText(email)
 
-        //Create the dialog window
+        // Create the dialog window
         val dialog = AlertDialog.Builder(requireActivity())
             .setView(binding.root)
             .setTitle("Mailjet API")
@@ -123,7 +124,7 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
                 val secretText = editTextSecret.text.toString()
                 val emailText = editTextEmail.text.toString()
 
-                //Pass the new input values to store them in the shared preferences
+                // Pass the new input values to store them in the shared preferences
                 listener!!.applyTexts(keyText, secretText, emailText)
             }
             .create()
@@ -131,7 +132,7 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
         dialog.setOnShowListener {
             this.okButton = (it as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE)
 
-            //Set the initial values for the input fields and update the OK button
+            // Set the initial values for the input fields and update the OK button
             if (email != null) {
                 binding.emailText.setText(email)
                 emailValid = true
@@ -141,20 +142,19 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
                 setOkButton(okButton)
             }
 
-            //Set the initial values for the input fields and update the OK button
+            // Set the initial values for the input fields and update the OK button
             if (ivByteKey != null && apiKeyEnc != null) {
 
-                //Decrypt the IV byte and the key
+                // Decrypt the IV byte and the key
                 try {
                     val keyText = keyStore.decryptData(
                         ivByteKey.toByteArray(Charsets.ISO_8859_1),
                         apiKeyEnc.toByteArray(Charsets.ISO_8859_1)
                     )
 
-                    //Set the password text in the input field
+                    // Set the password text in the input field
                     editTextKey.setText(keyText)
                     keyValid = true
-
                 } catch (e: Exception) {
                     Log.e("EXCEPTION", "error: ", e)
                     setOkButton(okButton)
@@ -165,20 +165,19 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
                 setOkButton(okButton)
             }
 
-            //Set the initial values for the input fields and update the OK button
+            // Set the initial values for the input fields and update the OK button
             if (ivByteSecret != null && apiSecretEnc != null) {
 
-                //Decrypt the IV byte and the secret
+                // Decrypt the IV byte and the secret
                 try {
                     val secretText = keyStore.decryptData(
                         ivByteSecret.toByteArray(Charsets.ISO_8859_1),
                         apiSecretEnc.toByteArray(Charsets.ISO_8859_1)
                     )
 
-                    //Set the password text in the input field
+                    // Set the password text in the input field
                     editTextKey.setText(secretText)
                     keyValid = true
-
                 } catch (e: Exception) {
                     Log.e("EXCEPTION", "error: ", e)
                     setOkButton(okButton)
@@ -206,13 +205,14 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
         return dialog
     }
 
+    @Suppress("ReturnCount")
     private fun validateKey(key: String): Boolean {
-        var layout = binding.apiKeyLayout
-        if (key.length < 32) {
+        val layout = binding.apiKeyLayout
+        if (key.length < KEY_LENGTH) {
             layout.error = String.format(resources.getString(R.string.err_too_short), keyString)
             return false
         }
-        if (key.length > 32) {
+        if (key.length > KEY_LENGTH) {
             layout.error = String.format(resources.getString(R.string.err_too_long), secretString)
             return false
         }
@@ -234,23 +234,21 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
             layout.error = null
             return true
         }
-
-
     }
 
+    @Suppress("ReturnCount")
     private fun validateSecret(secret: String): Boolean {
-        var layout = binding.apiSecretLayout
-//        if (secret.length < 32) {
-//            layout.error = String.format(resources.getString(R.string.err_too_short), secretString)
-//            return false
-//        }
-//
-//        if (secret.length > 32) {
-//            layout.error = String.format(
-//                resources.getString(R.string.err_too_long, secretString)
-//            )
-//            return false
-//        }
+        val layout = binding.apiSecretLayout
+        if (secret.length < SECRET_LENGTH) {
+            layout.error = String.format(resources.getString(R.string.err_too_short), secretString)
+            return false
+        }
+
+        if (secret.length > SECRET_LENGTH) {
+            layout.error = String.format(resources.getString(R.string.err_too_long, secretString))
+            return false
+        }
+
         if (secret.isEmpty()) {
             layout.error = String.format(resources.getString(R.string.err_not_empty), secretString)
             return false
@@ -261,8 +259,8 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
             return false
         }
 
-        //Check special characters
-        if(Pattern.compile("[^a-z0-9]", Pattern.CASE_INSENSITIVE).matcher(secret).find()){
+        // Check special characters
+        if (Pattern.compile("[^a-z0-9]", Pattern.CASE_INSENSITIVE).matcher(secret).find()) {
             layout.error = String.format(resources.getString(R.string.err_invalid), keyString)
             return false
         }
@@ -277,8 +275,9 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
         }
     }
 
+    @Suppress("ReturnCount")
     private fun validateEmail(email: String): Boolean {
-        var layout = binding.emailLayout
+        val layout = binding.emailLayout
 
         if (email.isEmpty()) {
             layout.error = String.format(resources.getString(R.string.err_not_empty), emailString)
@@ -290,7 +289,7 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
             return false
         }
 
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             layout.error = String.format(resources.getString(R.string.err_invalid), emailString)
             return false
         }
@@ -309,12 +308,10 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = try {
-            context as MailDialog.MailDialogListener
+            context as MailDialogListener
         } catch (e: ClassCastException) {
-            throw ClassCastException(
-                context.toString() +
-                        "must implement ConnectDialogListener"
-            )
+            Log.e("EXCEPTION", "${e.message}")
+            throw ClassCastException("$context: must implement ConnectDialogListener")
         }
     }
 

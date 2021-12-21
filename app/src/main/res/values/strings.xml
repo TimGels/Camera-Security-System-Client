@@ -52,15 +52,22 @@
     <string name="share_text">This video was shared with the CameraSecuritySystem app!</string>
     <string name="title_activity_gallery">Gallery</string>
 
-    <string name="tap_to_edit_connection_settings">Tap to edit connection settings</string>
-
-    <!-- Email related-->
+    <!-- Email API related-->
     <string name="mailjet_explanation">To use the email option, create a Mailjet account on Mailjet.com and follow the steps. You can enter your API key, API secret and your e-mail address in the fields below.</string>
     <string name="mail_key_string">API Key</string>
     <string name="mail_secret_string">API Secret</string>
     <string name="mail_email_string">E-mail address</string>
+    <string name="e_mail_address">E-mail address</string>
 
+    <!-- Weather API-->
     <string name="weather_api_explanation">To use the weather API, get your API key at https://openweathermap.org/api</string>
     <string name="city">City</string>
     <string name="api_key">API Key</string>
+    <string name="api_secret">API Secret</string>
+
+    <!-- Settings related   -->
+    <string name="mail_settings">Mail Settings</string>
+    <string name="weather_settings">Weather settings</string>
+    <string name="connect">Connect</string>
+    <string name="tap_to_edit_connection_settings">Tap to edit connection settings</string>
 </resources>

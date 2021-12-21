@@ -9,15 +9,12 @@ import com.mailjet.client.MailjetClient
 import com.mailjet.client.MailjetRequest
 import com.mailjet.client.MailjetResponse
 import com.mailjet.client.resource.Emailv31
-
-import org.json.JSONObject
-
 import org.json.JSONArray
-
+import org.json.JSONObject
 
 class MailSender(val context: Context) {
 
-    //Get access to all shared preferences
+    // Get access to all shared preferences
     val sharedPreferences = context.getSharedPreferences(
         "com.camerasecuritysystem.client",
         Context.MODE_PRIVATE
@@ -31,19 +28,22 @@ class MailSender(val context: Context) {
         getKey(),
         getSecret(),
         ClientOptions("v3.1")
-    );
+    )
     var request: MailjetRequest? = MailjetRequest(Emailv31.resource)
         .property(
-            Emailv31.MESSAGES, JSONArray()
+            Emailv31.MESSAGES,
+            JSONArray()
                 .put(
                     JSONObject()
                         .put(
-                            Emailv31.Message.FROM, JSONObject()
+                            Emailv31.Message.FROM,
+                            JSONObject()
                                 .put("Email", "jochembrans@gmail.com")
                                 .put("Name", "CameraSecuritySystem")
                         )
                         .put(
-                            Emailv31.Message.TO, JSONArray()
+                            Emailv31.Message.TO,
+                            JSONArray()
                                 .put(
                                     JSONObject()
                                         .put("Email", getEmail())
@@ -72,7 +72,6 @@ class MailSender(val context: Context) {
         } catch (e: Exception) {
             Log.e("MAIL EXC", e.toString())
         }
-
     }
 
     private fun getKey(): String? {
@@ -87,7 +86,7 @@ class MailSender(val context: Context) {
         )
     }
 
-    private fun getSecret() : String?{
+    private fun getSecret(): String? {
         val secretBytes =
             sharedPreferences.getString(context.resources.getString(R.string.secretIVByte), null)
         val secretEnc =
@@ -98,6 +97,4 @@ class MailSender(val context: Context) {
             secretEnc!!.toByteArray(Charsets.ISO_8859_1)
         )
     }
-
-
 }
