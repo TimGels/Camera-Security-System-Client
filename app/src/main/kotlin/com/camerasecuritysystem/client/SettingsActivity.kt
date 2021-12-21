@@ -15,12 +15,16 @@ import com.camerasecuritysystem.client.models.ServerConnection
 
 class SettingsActivity : AppCompatActivity(),
     ConnectDialog.ConnectDialogListener,
-    MailDialog.MailDialogListener {
+    MailDialog.MailDialogListener,
+    WeatherDialog.WeatherDialogListener {
 
     private lateinit var binding: ActivitySettingsBinding
 
+    //TODO koppelen aan strings.xml
     private var keyStoreServer = KeyStoreHelper("connectToServer")
     private var keyStoreMail = KeyStoreHelper("MailAPI")
+    private var keyStoreWeather =
+        KeyStoreHelper("weatherApiKey")
 
     lateinit var connectionLiveData: ConnectionLiveData
     lateinit var serverLiveData: ServerLiveData
@@ -57,6 +61,10 @@ class SettingsActivity : AppCompatActivity(),
 
         binding.mailSettingsButton.setOnClickListener {
             openMailDialog()
+        }
+
+        binding.weatherSettingsButton.setOnClickListener {
+            openWeatherDialog()
         }
 
         // Used in the connectBtn onClickListener and connectionLiveData observer
@@ -170,6 +178,11 @@ class SettingsActivity : AppCompatActivity(),
         mailDialog.show(supportFragmentManager, "mail dialog")
     }
 
+    private fun openWeatherDialog() {
+        val weatherDialog = WeatherDialog(applicationContext)
+        weatherDialog.show(supportFragmentManager, "weather dialog")
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return false
@@ -280,8 +293,10 @@ class SettingsActivity : AppCompatActivity(),
         ).apply()
 
         sharedPreferences.edit().putString(resources.getString(R.string.port), port).apply()
-        sharedPreferences.edit().putString(resources.getString(R.string.ip_address), ipAddress).apply()
-        sharedPreferences.edit().putString(resources.getString(R.string.camera_id), cameraID).apply()
+        sharedPreferences.edit().putString(resources.getString(R.string.ip_address), ipAddress)
+            .apply()
+        sharedPreferences.edit().putString(resources.getString(R.string.camera_id), cameraID)
+            .apply()
     }
 
     override fun applyTexts(apiKey: String, apiSecret: String, email: String) {
@@ -313,5 +328,24 @@ class SettingsActivity : AppCompatActivity(),
         ).apply()
 
         sharedPreferences.edit().putString(resources.getString(R.string.email), email).apply()
+    }
+
+    override fun applyTexts(apiKey: String, city: String) {
+        // Encrypt the key
+        val pairKey = keyStoreMail.encryptData(apiKey)
+
+        // Store the IV bytes and the key and secret
+        sharedPreferences.edit().putString(
+            resources.getString(R.string.weatherKeyIVByte),
+            pairKey.first.toString(Charsets.ISO_8859_1)
+        ).apply()
+
+        sharedPreferences.edit().putString(
+            resources.getString(R.string.weatherApiKey),
+            pairKey.second.toString(Charsets.ISO_8859_1)
+        ).apply()
+
+        sharedPreferences.edit().putString(resources.getString(R.string.weatherCity), city).apply()
+
     }
 }

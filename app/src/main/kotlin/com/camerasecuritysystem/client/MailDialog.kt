@@ -15,7 +15,7 @@ import java.lang.Exception
 import java.lang.NumberFormatException
 import java.util.regex.Pattern
 
-const val KEY_LENGTH = 32
+const val KEY_LENGTH_MAIL = 32
 const val SECRET_LENGTH = 32
 
 class MailDialog(context: Context) : AppCompatDialogFragment() {
@@ -208,16 +208,22 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
     @Suppress("ReturnCount")
     private fun validateKey(key: String): Boolean {
         val layout = binding.apiKeyLayout
-        if (key.length < KEY_LENGTH) {
+        if (key.length < KEY_LENGTH_MAIL) {
             layout.error = String.format(resources.getString(R.string.err_too_short), keyString)
             return false
         }
-        if (key.length > KEY_LENGTH) {
-            layout.error = String.format(resources.getString(R.string.err_too_long), secretString)
+        if (key.length > KEY_LENGTH_MAIL) {
+            layout.error = String.format(resources.getString(R.string.err_too_long), keyString)
             return false
         }
         if (key.isEmpty()) {
             layout.error = String.format(resources.getString(R.string.err_not_empty), keyString)
+            return false
+        }
+
+        // Check special characters
+        if (Pattern.compile("[^a-z0-9]", Pattern.CASE_INSENSITIVE).matcher(key).find()) {
+            layout.error = String.format(resources.getString(R.string.err_invalid), keyString)
             return false
         }
 
