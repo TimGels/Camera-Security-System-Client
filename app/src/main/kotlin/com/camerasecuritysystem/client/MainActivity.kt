@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
 
-        val context = this.applicationContext
+        CSSApplication.context = this.applicationContext
 
         connectionLiveData = ConnectionLiveData(this)
         connectionLiveData.observe(this, { isNetworkAvailable ->
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
             // TODO: Check for autostart==true
             if (isNetworkAvailable) {
-                ServerConnection.getInstance().connectIfPossible(context)
+                ServerConnection.getInstance().connectIfPossible()
             }
         })
     }

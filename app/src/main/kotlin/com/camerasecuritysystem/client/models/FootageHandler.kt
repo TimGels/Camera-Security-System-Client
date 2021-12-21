@@ -1,19 +1,22 @@
 package com.camerasecuritysystem.client.models
 
-class FootageHandler {
+import com.camerasecuritysystem.client.CSSApplication
+import java.io.File
 
-    companion object {
-        @JvmStatic fun getAllFootage(): ArrayList<Footage> {
-            //Create array that will contain all video files
-            val allFootage = ArrayList<Footage>()
+object FootageHandler {
+    fun getAllFootage(): ArrayList<Footage> {
+        val context = CSSApplication.context
 
-            //Get all footage from sandbox
-            //Now test data:
-            allFootage.add(Footage(filename = "video.mp4"))
-            allFootage.add(Footage(filename = "video1.mp4"))
+        // Create array that will contain all video files
+        val allFootage = ArrayList<Footage>()
 
-            return allFootage
+        // Get all footage from sandbox
+        val files = File("${context.filesDir}/dashcam/").listFiles()
+
+        files?.forEach { file ->
+            allFootage.add(Footage(file.name))
         }
-    }
 
+        return allFootage
+    }
 }

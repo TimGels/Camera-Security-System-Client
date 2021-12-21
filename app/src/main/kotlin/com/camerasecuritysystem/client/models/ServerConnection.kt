@@ -2,6 +2,7 @@ package com.camerasecuritysystem.client.models
 
 import android.content.Context
 import android.util.Log
+import com.camerasecuritysystem.client.CSSApplication
 import com.camerasecuritysystem.client.KeyStoreHelper
 import com.camerasecuritysystem.client.R
 import com.camerasecuritysystem.client.cassert
@@ -193,11 +194,13 @@ class ServerConnection {
         callback(_state)
     }
 
-    private fun credentialsEntered(context: Context): Boolean {
-        var sharedPreferences =
+    private fun credentialsEntered(): Boolean {
+        val context = CSSApplication.context
+
+        val sharedPreferences =
             context.getSharedPreferences("com.camerasecuritysystem.client", Context.MODE_PRIVATE)
 
-        val camera_id =
+        val cameraid =
             sharedPreferences.getString(context.resources.getString(R.string.camera_id), null)
         val pwd = sharedPreferences.getString(context.resources.getString(R.string.encPwd), null)
         val pwdIVByte =
@@ -206,12 +209,12 @@ class ServerConnection {
         val hostname =
             sharedPreferences.getString(context.resources.getString(R.string.ip_address), null)
 
-        var credentials = arrayOf(camera_id, pwd, pwdIVByte, port, hostname)
+        val credentials = arrayOf(cameraid, pwd, pwdIVByte, port, hostname)
 
         return credentials.contains(null) == false
     }
 
-    fun connectIfPossible(context: Context) {
+    fun connectIfPossible() {
         if (isConnected()) {
             Log.e(tag, "Already connected")
             return
@@ -222,7 +225,7 @@ class ServerConnection {
             return
         }
 
-        if (!credentialsEntered(context)) {
+        if (!credentialsEntered()) {
             state = ConnectionState.NO_CREDENTIALS
             return
         }
@@ -233,15 +236,17 @@ class ServerConnection {
         }
 
         GlobalScope.launch {
-            initializeConnection(getCredentials(context))
+            initializeConnection(getCredentials())
         }
     }
 
-    private fun getCredentials(context: Context): HashMap<String, String> {
+    private fun getCredentials(): HashMap<String, String> {
+        val context = CSSApplication.context
+
         val sharedPreferences =
             context.getSharedPreferences("com.camerasecuritysystem.client", Context.MODE_PRIVATE)
 
-        val camera_id =
+        val cameraid =
             sharedPreferences.getString(context.resources.getString(R.string.camera_id), null)
         val pwd = sharedPreferences.getString(context.resources.getString(R.string.encPwd), null)
         val pwdIVByte =
@@ -252,7 +257,7 @@ class ServerConnection {
 
         val hashMap: HashMap<String, String> = HashMap()
 
-        hashMap.put(context.resources.getString(R.string.camera_id), camera_id!!)
+        hashMap.put(context.resources.getString(R.string.camera_id), cameraid!!)
         hashMap.put(context.resources.getString(R.string.encPwd), pwd!!)
         hashMap.put(context.resources.getString(R.string.pwdIVByte), pwdIVByte!!)
         hashMap.put(context.resources.getString(R.string.port), port!!)
