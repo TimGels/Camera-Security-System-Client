@@ -96,9 +96,11 @@ class SettingsActivity : AppCompatActivity(),
         val hasInternet = connectionLiveData.value
         val connectionState = serverLiveData.value
 
-        if (hasInternet == null || !hasInternet) {
-            setNoInternet()
-        } else if (hasInternet == true) {
+        if (hasInternet == null) {
+            return
+        }
+
+        if (hasInternet) {
             if (connectionState != null) {
                 when (connectionState) {
                     ConnectionState.NO_CREDENTIALS -> {
@@ -119,6 +121,8 @@ class SettingsActivity : AppCompatActivity(),
                 Log.e("state", "NULL")
                 setConnect()
             }
+        } else {
+            setNoInternet()
         }
     }
 
