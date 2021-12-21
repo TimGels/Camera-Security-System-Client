@@ -113,7 +113,7 @@ complexity:
     active: true
     threshold: 600
   LongMethod:
-    active: true
+    active: false
     threshold: 60
   LongParameterList:
     active: true
@@ -727,7 +727,7 @@ style:
     active: false
   ReturnCount:
     active: true
-    max: 2
+    max: 3
     excludedFunctions: 'equals'
     excludeLabeled: false
     excludeReturnFromLambda: true
