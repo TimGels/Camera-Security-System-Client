@@ -67,9 +67,6 @@ class SettingsActivity : AppCompatActivity(),
             openWeatherDialog()
         }
 
-        // Used in the connectBtn onClickListener and connectionLiveData observer
-        val context = this.applicationContext
-
         binding.connectBtn.setOnClickListener {
             if (serverLiveData.value == null) {
                 Log.e("connectOnclick", "ConnectBtn clicked with no state!")
@@ -77,7 +74,7 @@ class SettingsActivity : AppCompatActivity(),
                 serverLiveData.value == ConnectionState.NO_CREDENTIALS
             ) {
                 // Setup a connection.
-                ServerConnection.getInstance().connectIfPossible(context)
+                ServerConnection.getInstance().connectIfPossible()
             } else if (serverLiveData.value == ConnectionState.CONNECTED) {
                 // Close the connection.
                 ServerConnection.getInstance().close()
@@ -98,7 +95,7 @@ class SettingsActivity : AppCompatActivity(),
 
             // TODO: Check for autostart==true
             if (serverLiveData.value == ConnectionState.CLOSED) {
-                ServerConnection.getInstance().connectIfPossible(context)
+                ServerConnection.getInstance().connectIfPossible()
             }
 
             updateUI()
