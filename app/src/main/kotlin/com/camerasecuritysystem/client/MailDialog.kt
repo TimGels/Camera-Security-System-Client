@@ -5,12 +5,15 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.widget.doOnTextChanged
 import com.camerasecuritysystem.client.databinding.MailDialogLayoutBinding
 import java.lang.Exception
+import java.lang.NumberFormatException
+import java.util.regex.Pattern
 
 class MailDialog(context: Context) : AppCompatDialogFragment() {
 
@@ -217,44 +220,81 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
             layout.error = String.format(resources.getString(R.string.err_not_empty), keyString)
             return false
         }
-        //TODO check numbers and letters
 
-        layout.error = null
-        return true
+        if (key.all { it.isLetter() }) {
+            layout.error = String.format(resources.getString(R.string.err_invalid), keyString)
+            return false
+        }
+
+        return try {
+            key.toDouble()
+            layout.error = String.format(resources.getString(R.string.err_invalid), keyString)
+            false
+        } catch (e: NumberFormatException) {
+            layout.error = null
+            return true
+        }
+
+
     }
 
     private fun validateSecret(secret: String): Boolean {
         var layout = binding.apiSecretLayout
-        if (secret.length < 32) {
-            layout.error = String.format(resources.getString(R.string.err_too_short), secretString)
-            return false
-        }
-        if (secret.length > 32) {
-            layout.error = String.format(
-                resources.getString(R.string.err_too_long, secretString))
-                return false
-        }
+//        if (secret.length < 32) {
+//            layout.error = String.format(resources.getString(R.string.err_too_short), secretString)
+//            return false
+//        }
+//
+//        if (secret.length > 32) {
+//            layout.error = String.format(
+//                resources.getString(R.string.err_too_long, secretString)
+//            )
+//            return false
+//        }
         if (secret.isEmpty()) {
             layout.error = String.format(resources.getString(R.string.err_not_empty), secretString)
             return false
         }
-        //TODO check numbers and letters
-        layout.error = null
-        return true
+
+        if (secret.all { it.isLetter() }) {
+            layout.error = String.format(resources.getString(R.string.err_invalid), keyString)
+            return false
+        }
+
+        //Check special characters
+        if(Pattern.compile("[^a-z0-9]", Pattern.CASE_INSENSITIVE).matcher(secret).find()){
+            layout.error = String.format(resources.getString(R.string.err_invalid), keyString)
+            return false
+        }
+
+        return try {
+            secret.toDouble()
+            layout.error = String.format(resources.getString(R.string.err_invalid), keyString)
+            false
+        } catch (e: NumberFormatException) {
+            layout.error = null
+            return true
+        }
     }
 
     private fun validateEmail(email: String): Boolean {
         var layout = binding.emailLayout
 
         if (email.isEmpty()) {
-            layout.error = String.format(resources.getString(R.string.err_not_empty), email)
+            layout.error = String.format(resources.getString(R.string.err_not_empty), emailString)
             return false
         }
 
         if (!email.contains("@")) {
-            layout.error = String.format(resources.getString(R.string.err_email_invalid), email)
+            layout.error = String.format(resources.getString(R.string.err_invalid), emailString)
             return false
         }
+
+        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            layout.error = String.format(resources.getString(R.string.err_invalid), emailString)
+            return false
+        }
+
         layout.error = null
         return true
     }
