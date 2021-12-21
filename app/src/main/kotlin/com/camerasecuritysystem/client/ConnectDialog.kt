@@ -17,7 +17,7 @@ class ConnectDialog : AppCompatDialogFragment() {
 
     private var listener: ConnectDialogListener? = null
 
-    private var keyStore = KeyStoreHelper(resources.getString(R.string.keyStoreAliasServer))
+    private lateinit var keyStore: KeyStoreHelper
 
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -38,6 +38,8 @@ class ConnectDialog : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = requireActivity().layoutInflater
         binding = ConnectDialogLayoutBinding.inflate(inflater)
+
+        keyStore = KeyStoreHelper(requireContext().getString(R.string.keyStoreAliasServer))
 
         this.cameraidStr    = resources.getString(R.string.camera_id_title)
         this.portStr        = resources.getString(R.string.port_title)
