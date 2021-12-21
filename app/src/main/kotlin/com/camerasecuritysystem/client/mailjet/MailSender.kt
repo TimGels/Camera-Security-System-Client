@@ -1,4 +1,4 @@
-package com.camerasecuritysystem.client.gmail
+package com.camerasecuritysystem.client.mailjet
 
 import android.content.Context
 import android.util.Log
