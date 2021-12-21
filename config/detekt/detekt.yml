@@ -325,7 +325,7 @@ formatting:
     active: false
     autoCorrect: true
   NoBlankLineBeforeRbrace:
-    active: false
+    active: true
     autoCorrect: true
   NoConsecutiveBlankLines:
     active: true
