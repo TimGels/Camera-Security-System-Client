@@ -190,7 +190,7 @@ class WeatherDialog(context: Context) : AppCompatDialogFragment() {
 
         // Check special characters
         if (!Pattern.compile("^[a-zA-Z0-9äöüëÄÖÜËß',.\\s-]{1,50}\$", Pattern.CASE_INSENSITIVE)
-                .matcher(city).find()
+            .matcher(city).find()
         ) {
             layout.error = String.format(resources.getString(R.string.err_invalid), keyString)
             return false
