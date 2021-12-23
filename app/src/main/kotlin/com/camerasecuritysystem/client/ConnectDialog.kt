@@ -12,6 +12,8 @@ import androidx.core.widget.doOnTextChanged
 import com.camerasecuritysystem.client.databinding.ConnectDialogLayoutBinding
 import java.util.regex.Pattern
 
+const val MINIMUM_PASSWORD_LENGTH = 6
+
 class ConnectDialog : AppCompatDialogFragment() {
 
     private var listener: ConnectDialogListener? = null
@@ -275,7 +277,6 @@ class ConnectDialog : AppCompatDialogFragment() {
             return false
         }
 
-        val MINIMUM_PASSWORD_LENGTH = 6
         if (passwordText.length < MINIMUM_PASSWORD_LENGTH) {
             password_til.error = String.format(resources.getString(R.string.err_too_short), passwordStr)
             return false
