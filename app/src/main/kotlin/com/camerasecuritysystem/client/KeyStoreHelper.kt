@@ -46,11 +46,9 @@ class KeyStoreHelper(private val keystoreAlias: String) {
         if (keyStore.getEntry(keystoreAlias, null) == null) {
             return null
         }
-        else {
-            val secretKeyEntry: KeyStore.SecretKeyEntry =
-                keyStore.getEntry(keystoreAlias, null) as KeyStore.SecretKeyEntry
-            return secretKeyEntry.secretKey
-        }
+        val secretKeyEntry: KeyStore.SecretKeyEntry =
+            keyStore.getEntry(keystoreAlias, null) as KeyStore.SecretKeyEntry
+        return secretKeyEntry.secretKey
     }
 
     /**

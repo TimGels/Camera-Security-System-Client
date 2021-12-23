@@ -187,14 +187,14 @@ class WeatherDialog(context: Context) : AppCompatDialogFragment() {
     @Suppress("ReturnCount")
     private fun validateCity(city: String): Boolean {
         val layout = binding.cityLayout
-        if (!city.all { it.isLetter() }) {
-            layout.error = String.format(resources.getString(R.string.err_invalid), cityString)
-            return false
-        }
+//        if (!city.all { it.isLetter() }) {
+//            layout.error = String.format(resources.getString(R.string.err_invalid), cityString)
+//            return false
+//        }
 
         // Check special characters
         //TODO regex spaces and hyphens -
-        if (Pattern.compile("[^a-z0-9]", Pattern.CASE_INSENSITIVE).matcher(city).find()) {
+        if (!Pattern.compile("^[a-zA-Z0-9äöüëÄÖÜËß',.\\s-]{1,50}\$", Pattern.CASE_INSENSITIVE).matcher(city).find()) {
             layout.error = String.format(resources.getString(R.string.err_invalid), keyString)
             return false
         }

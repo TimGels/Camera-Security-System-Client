@@ -20,7 +20,7 @@ class SettingsActivity : AppCompatActivity(),
 
     private lateinit var binding: ActivitySettingsBinding
 
-    //TODO koppelen aan strings.xml
+    // TODO koppelen aan strings.xml
     private var keyStoreServer = KeyStoreHelper("connectToServer")
     private var keyStoreMail = KeyStoreHelper("MailAPI")
     private var keyStoreWeather =
@@ -141,7 +141,7 @@ class SettingsActivity : AppCompatActivity(),
         binding.connectBtn.isEnabled = false
         binding.connectBtn.backgroundTintList =
             getColorStateList(R.color.design_default_color_error)
-        binding.connectBtn.text = "No internet"
+        binding.connectBtn.text = resources.getString(R.string.no_internet)
     }
 
     private fun setConnect() {
@@ -149,7 +149,7 @@ class SettingsActivity : AppCompatActivity(),
         binding.connectBtn.isEnabled = true
         binding.connectBtn.backgroundTintList =
             getColorStateList(R.color.design_default_color_primary)
-        binding.connectBtn.text = "Connect"
+        binding.connectBtn.text = resources.getString(R.string.connect)
     }
 
     private fun setConnecting() {
@@ -157,7 +157,7 @@ class SettingsActivity : AppCompatActivity(),
         binding.connectBtn.isEnabled = false
         binding.connectBtn.backgroundTintList =
             getColorStateList(R.color.cardview_dark_background)
-        binding.connectBtn.text = "Connecting"
+        binding.connectBtn.text = resources.getString(R.string.connecting)
     }
 
     private fun setConnected() {
@@ -165,7 +165,7 @@ class SettingsActivity : AppCompatActivity(),
         binding.connectBtn.isEnabled = true
         binding.connectBtn.backgroundTintList =
             getColorStateList(R.color.design_default_color_primary_dark)
-        binding.connectBtn.text = "Disconnect"
+        binding.connectBtn.text = resources.getString(R.string.disconnect)
     }
 
     private fun openConnectionDialog() {
@@ -332,7 +332,7 @@ class SettingsActivity : AppCompatActivity(),
 
     override fun applyTexts(apiKey: String, city: String) {
         // Encrypt the key
-        val pairKey = keyStoreMail.encryptData(apiKey)
+        val pairKey = keyStoreWeather.encryptData(apiKey)
 
         // Store the IV bytes and the key and secret
         sharedPreferences.edit().putString(
@@ -346,6 +346,5 @@ class SettingsActivity : AppCompatActivity(),
         ).apply()
 
         sharedPreferences.edit().putString(resources.getString(R.string.weatherCity), city).apply()
-
     }
 }
