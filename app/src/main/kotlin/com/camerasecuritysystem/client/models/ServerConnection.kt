@@ -110,10 +110,12 @@ class ServerConnection {
                     }
                 } catch (ex: ClosedChannelException) {
                     Log.e("Channel closed", "${ex.message}")
+                } catch (ex: Exception) {
+                    Log.e(tag, "Error occured while receiving: ${ex.message}")
+                } finally {
+                    webSocketSession?.close()
+                    webSocketSession = null
                 }
-
-                webSocketSession?.close()
-                webSocketSession = null
             }
 
             Log.d(tag, "go-away")
