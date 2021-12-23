@@ -19,6 +19,49 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@+id/vertical_guideline"
+        app:layout_constraintRight_toRightOf="@id/vertical_guideline"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline_temp"
+        >
+
+        <TextView
+            android:id="@+id/temperature_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textSize="35sp"
+            app:flow_verticalAlign="center"
+            app:flow_horizontalAlign="center"
+            android:text="@string/temperature_degrees"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="35sp"
+            app:flow_verticalAlign="center"
+            app:flow_horizontalAlign="center"
+            android:text="@string/temperature_suffix"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            />
+    </LinearLayout>
+
+
+
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
