@@ -18,6 +18,7 @@ import io.ktor.http.cio.websocket.close
 import io.ktor.network.sockets.ConnectTimeoutException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerializationException
 import java.nio.channels.ClosedChannelException
 import java.nio.channels.UnresolvedAddressException
 import kotlinx.serialization.decodeFromString
@@ -104,8 +105,12 @@ class ServerConnection {
                     for (frame in incoming) {
                         if (frame is Frame.Binary) {
                             val json = String(frame.readBytes())
-                            val serverMessage: Message = Json.decodeFromString(json)
-                            MessageHandler.handleMessage(serverMessage, getInstance())
+                            try {
+                                val serverMessage: Message = Json.decodeFromString(json)
+                                MessageHandler.handleMessage(serverMessage, getInstance())
+                            } catch (ex: SerializationException) {
+                                Log.e(tag, "${ex.message}")
+                            }
                         }
                     }
                 } catch (ex: ClosedChannelException) {
