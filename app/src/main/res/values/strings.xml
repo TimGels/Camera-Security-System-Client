@@ -39,6 +39,10 @@
     <string name="Idle">Idle</string>
     <color name="txWhite">#FFFFFFFF</color>
 
+    <string name="temperature_degrees">0.00</string>
+    <!--Celsius-->
+    <string name="temperature_suffix">\u2103</string>
+
     <!-- Validation errors -->
     <string name="err_not_empty">%1$s cannot be empty!</string>
     <string name="err_invalid">%1$s is invalid!</string>

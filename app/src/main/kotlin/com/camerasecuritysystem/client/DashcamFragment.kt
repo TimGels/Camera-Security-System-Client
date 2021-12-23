@@ -1,6 +1,7 @@
 package com.camerasecuritysystem.client
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -13,22 +14,46 @@ import androidx.annotation.Nullable
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.video.*
+import androidx.camera.video.ActiveRecording
+import androidx.camera.video.FileOutputOptions
+import androidx.camera.video.QualitySelector
+import androidx.camera.video.Recorder
+import androidx.camera.video.VideoCapture
+import androidx.camera.video.VideoRecordEvent
 import androidx.core.content.ContextCompat
 import androidx.core.util.Consumer
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.camerasecuritysystem.client.databinding.FragmentDashcamBinding
+import com.camerasecuritysystem.client.models.IWeatherAPIService
+import com.camerasecuritysystem.client.models.Weather
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.properties.Delegates
 
+const val OPEN_WEATHER_BASE_URL: String = "https://api.openweathermap.org/"
+
+const val TAG: String = "DEBUG TEXT"
+
+const val DIFF_KELVIN_CELSIUS: Float = 273.15F
+
 class DashcamFragment : Fragment() {
 
+    val networkResponse: MutableLiveData<Float> = MutableLiveData()
+
     private var binding: FragmentDashcamBinding? = null
-    private var TAG = "DEBUG TEXT"
 
     private var activeRecording: ActiveRecording? = null
     private lateinit var recordingState: VideoRecordEvent
@@ -38,14 +63,19 @@ class DashcamFragment : Fragment() {
     private var timeLimitFragment by Delegates.notNull<Int>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        var sharedPreferences =
+        val sharedPreferences =
             requireContext().getSharedPreferences(
                 "com.camerasecuritysystem.client",
                 Context.MODE_PRIVATE
             )
+
+        networkResponse.observe(viewLifecycleOwner, {
+            binding?.temperatureField?.text = it.toString()
+        })
 
         timeLimitFragment = sharedPreferences.getInt(
             resources.getString(R.string.fragment_recording_seconds),
@@ -54,7 +84,55 @@ class DashcamFragment : Fragment() {
 
         binding = FragmentDashcamBinding.inflate(inflater, container, false)
 
+        requestTemperature()
+
         return binding!!.root
+    }
+
+    private fun requestTemperature() = CoroutineScope(Dispatchers.IO).launch {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(OPEN_WEATHER_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val service: IWeatherAPIService = retrofit.create(IWeatherAPIService::class.java)
+
+        val main: Call<Weather> =
+            service.listWeather("", "")
+
+        main.enqueue(object : Callback<Weather> {
+            override fun onResponse(call: Call<Weather>, response: Response<Weather>) {
+                if (response.isSuccessful) {
+                    val tempKelvin = response.body()?.main?.temp
+
+                    if (tempKelvin == null || tempKelvin < 0) {
+                        Log.e(
+                            TAG,
+                            "Error detected while retrieving results from API: " +
+                                    OPEN_WEATHER_BASE_URL
+                        )
+                        Toast.makeText(
+                            requireContext(),
+                            "Error detected while retrieving results from API",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return
+                    }
+
+                    val temp =
+                        BigDecimal(tempKelvin.minus(DIFF_KELVIN_CELSIUS).toString()).setScale(
+                            2, RoundingMode.HALF_UP
+                        ).toFloat()
+                    networkResponse.postValue(temp)
+                } else {
+                    Toast.makeText(requireContext(), "City not found", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Weather>, t: Throwable) {
+                Toast.makeText(requireContext(), "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     override fun onViewCreated(view: View, @Nullable savedInstanceState: Bundle?) {
@@ -76,11 +154,13 @@ class DashcamFragment : Fragment() {
      * Initialize the UI components
      */
     private fun initializeUI() {
-        enableUI(false)  // Our eventListener will turn on the Recording UI.
+        enableUI(false) // Our eventListener will turn on the Recording UI.
         // React to user touching the capture button
         binding?.captureButton?.apply {
             setOnClickListener {
-                if (!this@DashcamFragment::recordingState.isInitialized || recordingState is VideoRecordEvent.Finalize) {
+                if (!this@DashcamFragment::recordingState.isInitialized ||
+                    recordingState is VideoRecordEvent.Finalize
+                ) {
                     binding!!.captureButton.setImageResource(R.drawable.ic_stop)
                     startRecording()
                 } else {
@@ -165,11 +245,9 @@ class DashcamFragment : Fragment() {
                 cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, videoCapture
                 )
-
             } catch (exc: Exception) {
                 Log.e(TAG, "startCamera: ", exc)
             }
-
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
@@ -204,6 +282,7 @@ class DashcamFragment : Fragment() {
     /**
      * CaptureEvent listener.
      */
+    @SuppressLint("SwitchIntDef")
     private val captureListener = Consumer<VideoRecordEvent> { event ->
         // cache the recording state
         if (event !is VideoRecordEvent.Status)
@@ -239,7 +318,7 @@ class DashcamFragment : Fragment() {
                 activeRecording?.stop()
                 startRecording()
             } else {
-                throw RuntimeException("Unexpected state of recording")
+                throw Exception("Unexpected state of recording")
             }
         }
     }
