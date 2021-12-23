@@ -256,9 +256,10 @@ class ConnectDialog : AppCompatDialogFragment() {
             return false
         }
         if (!Pattern.compile(
-                "((^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\$)|" +
-                        "^(^(?!\\bw{3}\\.\\b)[a-zA-Z0-9-_]{0,61}([a-zA-Z0-9])" +
-                        ".[a-zA-Z0-9-_]{1,})\\.[a-z]{2,4}\$)",
+                """
+                ((^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\$)|^(^(?!\\bw{3}\\.\\b)
+                [a-zA-Z0-9-_]{0,61}([a-zA-Z0-9]).[a-zA-Z0-9-_]{1,})\\.[a-z]{2,4}\$)
+                """.trimIndent(),
                 Pattern.CASE_INSENSITIVE
             ).matcher(ipAddressText).find()
         ) {
