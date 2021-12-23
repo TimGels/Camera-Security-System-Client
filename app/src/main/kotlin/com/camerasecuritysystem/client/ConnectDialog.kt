@@ -259,8 +259,11 @@ class ConnectDialog : AppCompatDialogFragment() {
                 "((^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\$)|" +
                         "^(^(?!\\bw{3}\\.\\b)[a-zA-Z0-9-_]{0,61}([a-zA-Z0-9])" +
                         ".[a-zA-Z0-9-_]{1,})\\.[a-z]{2,4}\$)",
-                Pattern.CASE_INSENSITIVE).matcher(ipAddressText).find()) {
-            ipAddress_til.error = String.format(resources.getString(R.string.err_invalid), ipaddressStr)
+                Pattern.CASE_INSENSITIVE
+            ).matcher(ipAddressText).find()
+        ) {
+            ipAddress_til.error =
+                String.format(resources.getString(R.string.err_invalid), ipaddressStr)
             return false
         }
 
@@ -278,7 +281,8 @@ class ConnectDialog : AppCompatDialogFragment() {
         }
 
         if (passwordText.length < MINIMUM_PASSWORD_LENGTH) {
-            password_til.error = String.format(resources.getString(R.string.err_too_short), passwordStr)
+            password_til.error =
+                String.format(resources.getString(R.string.err_too_short), passwordStr)
             return false
         }
 
