@@ -255,6 +255,14 @@ class ConnectDialog : AppCompatDialogFragment() {
                 String.format(resources.getString(R.string.err_not_empty), ipaddressStr)
             return false
         }
+
+        // Regex checks the following:
+        // -  IPv4 address containing 4 digits ranging from 1 to 999 separated by dots
+        // - The domain check allows base domain names starting from 1 characters to "unlimited".
+        //   When a subdomain is used it has to be in the range of 1 to 63 characters.
+        // - This check is not a bullet proof compliance check with the domain naming standard
+        //   and should only be used to help the user out, not to protect the input against
+        //   non compliant domains/ipv's.
         if (!Pattern.compile(
                 """
                 ((^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\$)|^(^(?!\\bw{3}\\.\\b)
@@ -301,7 +309,7 @@ class ConnectDialog : AppCompatDialogFragment() {
         } catch (e: ClassCastException) {
             throw ClassCastException(
                 context.toString() +
-                        "must implement ConnectDialogListener"
+                    "must implement ConnectDialogListener"
             )
         }
     }
