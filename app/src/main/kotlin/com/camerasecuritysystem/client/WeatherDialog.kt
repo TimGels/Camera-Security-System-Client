@@ -12,7 +12,7 @@ import androidx.core.widget.doOnTextChanged
 import com.camerasecuritysystem.client.databinding.WeatherDialogLayoutBinding
 import java.util.regex.Pattern
 
-const val KEY_LENGTH_WEATHER = 34
+const val KEY_LENGTH_WEATHER = 32
 
 class WeatherDialog(context: Context) : AppCompatDialogFragment() {
 

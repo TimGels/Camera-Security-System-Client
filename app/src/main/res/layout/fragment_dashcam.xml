@@ -26,6 +26,8 @@
         app:layout_constraintGuide_percent="0.05" />
 
     <LinearLayout
+        android:id="@+id/tempWrapper"
+        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="@+id/vertical_guideline"
