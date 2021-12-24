@@ -55,10 +55,6 @@ class SettingsActivity : AppCompatActivity(),
             saveSettings()
         }
 
-        binding.cancelButton.setOnClickListener {
-            finish()
-        }
-
         binding.mailSettingsButton.setOnClickListener {
             openMailDialog()
         }

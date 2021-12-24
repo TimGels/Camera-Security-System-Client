@@ -72,7 +72,7 @@
     <!-- Settings related   -->
     <string name="mail_settings">Mail Settings</string>
     <string name="weather_settings">Weather settings</string>
-    <string name="tap_to_edit_connection_settings">Tap to edit connection settings</string>
+    <string name="tap_to_edit_connection_settings">Connection settings</string>
     <string name="keyStoreAliasWeather">weatherApiKey</string>
     <string name="cityString">City name</string>
     <string name="weatherApiKey">weatherApiKey</string>
