@@ -1,7 +1,6 @@
 package com.camerasecuritysystem.client
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -26,7 +25,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.camerasecuritysystem.client.databinding.FragmentDashcamBinding
-import com.camerasecuritysystem.client.exceptions.UnexpectedStateException
 import com.camerasecuritysystem.client.models.IWeatherAPIService
 import com.camerasecuritysystem.client.models.Weather
 import kotlinx.coroutines.CoroutineScope
@@ -46,7 +44,7 @@ import kotlin.properties.Delegates
 
 const val OPEN_WEATHER_BASE_URL: String = "https://api.openweathermap.org/"
 
-const val TAG: String = "DEBUG TEXT"
+const val TAG: String = "DASHCAM_FRAGMENT"
 
 const val DIFF_KELVIN_CELSIUS: Float = 273.15F
 
@@ -318,7 +316,6 @@ class DashcamFragment : Fragment() {
     /**
      * CaptureEvent listener.
      */
-    @SuppressLint("SwitchIntDef")
     private val captureListener = Consumer<VideoRecordEvent> { event ->
         // cache the recording state
         if (event !is VideoRecordEvent.Status)
@@ -326,8 +323,9 @@ class DashcamFragment : Fragment() {
 
         if (event is VideoRecordEvent.Finalize) {
             val options = event.outputOptions
-            when (event.error) {
-                VideoRecordEvent.Finalize.ERROR_INSUFFICIENT_STORAGE -> if (options is FileOutputOptions) {
+
+            if (event.error == VideoRecordEvent.Finalize.ERROR_INSUFFICIENT_STORAGE) {
+                if (options is FileOutputOptions) {
                     Log.e(TAG, "Insufficient storage space available")
                     Toast.makeText(
                         requireContext(),
@@ -349,13 +347,12 @@ class DashcamFragment : Fragment() {
 
         if (time > timeLimitFragment) {
             val recording = activeRecording
-            if (recording != null) {
-                Log.e(TAG, stats.recordedDurationNanos.toString())
-                activeRecording?.stop()
-                startRecording()
-            } else {
-                throw UnexpectedStateException("Unexpected state of recording")
-            }
+
+            assert(recording != null)
+
+            Log.e(TAG, stats.recordedDurationNanos.toString())
+            activeRecording?.stop()
+            startRecording()
         }
     }
 

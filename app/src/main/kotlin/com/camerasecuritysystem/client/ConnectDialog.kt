@@ -256,9 +256,6 @@ class ConnectDialog : AppCompatDialogFragment() {
             return false
         }
 
-        // @formatter:off
-        // Formatter off to prevent the regex to be formatted
-
         // Regex checks the following:
         // -  IPv4 address containing 4 digits ranging from 1 to 999 separated by dots
         // - The domain check allows base domain names starting from 1 characters to "unlimited".
@@ -276,7 +273,7 @@ class ConnectDialog : AppCompatDialogFragment() {
                 String.format(resources.getString(R.string.err_invalid), ipaddressStr)
             return false
         }
-        // @formatter:on
+
         ipAddress_til.error = null
         return true
     }
