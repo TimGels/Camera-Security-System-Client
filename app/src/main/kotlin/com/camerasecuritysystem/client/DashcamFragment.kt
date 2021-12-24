@@ -26,6 +26,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.camerasecuritysystem.client.databinding.FragmentDashcamBinding
+import com.camerasecuritysystem.client.exceptions.UnexpectedStateException
 import com.camerasecuritysystem.client.models.IWeatherAPIService
 import com.camerasecuritysystem.client.models.Weather
 import kotlinx.coroutines.CoroutineScope
@@ -61,6 +62,7 @@ class DashcamFragment : Fragment() {
     private val mainThreadExecutor by lazy { ContextCompat.getMainExecutor(requireContext()) }
 
     private var timeLimitFragment by Delegates.notNull<Int>()
+    private var weatherAPIKey: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,6 +77,7 @@ class DashcamFragment : Fragment() {
 
         networkResponse.observe(viewLifecycleOwner, {
             binding?.temperatureField?.text = it.toString()
+            binding?.tempWrapper?.visibility = View.VISIBLE
         })
 
         timeLimitFragment = sharedPreferences.getInt(
@@ -82,58 +85,91 @@ class DashcamFragment : Fragment() {
             resources.getInteger(R.integer.default_fragment_recording_seconds)
         )
 
-        binding = FragmentDashcamBinding.inflate(inflater, container, false)
+        val weatherAPICity = sharedPreferences.getString(
+            resources.getString(R.string.weatherCity),
+            null
+        )
 
-        requestTemperature()
+        val encryptedWeatherAPIKey = sharedPreferences.getString(
+            resources.getString(R.string.weatherApiKey),
+            null
+        )
+
+        val weatherAPIKeyIVByte = sharedPreferences.getString(
+            resources.getString(R.string.weatherKeyIVByte),
+            null
+        )
+
+        // Check if the ivByte and encrypted key exist
+        if (weatherAPIKeyIVByte != null && encryptedWeatherAPIKey != null) {
+
+            val keyStore = KeyStoreHelper(requireContext().getString(R.string.keyStoreAliasWeather))
+            // Decrypt the IV byte and the key
+            try {
+                weatherAPIKey = keyStore.decryptData(
+                    weatherAPIKeyIVByte.toByteArray(Charsets.ISO_8859_1),
+                    encryptedWeatherAPIKey.toByteArray(Charsets.ISO_8859_1)
+                )
+            } catch (e: Exception) {
+                Log.e("EXCEPTION", "error: ", e)
+            }
+
+            if (weatherAPICity != null) {
+                requestTemperature(weatherAPICity, weatherAPIKey.toString())
+            }
+        }
+        binding = FragmentDashcamBinding.inflate(inflater, container, false)
 
         return binding!!.root
     }
 
-    private fun requestTemperature() = CoroutineScope(Dispatchers.IO).launch {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(OPEN_WEATHER_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+    private fun requestTemperature(cityName: String, apiKey: String) =
+        CoroutineScope(Dispatchers.IO).launch {
+            val retrofit = Retrofit.Builder()
+                .baseUrl(OPEN_WEATHER_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
 
-        val service: IWeatherAPIService = retrofit.create(IWeatherAPIService::class.java)
+            val service: IWeatherAPIService = retrofit.create(IWeatherAPIService::class.java)
 
-        val main: Call<Weather> =
-            service.listWeather("", "")
+            val main: Call<Weather> =
+                service.listWeather(cityName, apiKey)
 
-        main.enqueue(object : Callback<Weather> {
-            override fun onResponse(call: Call<Weather>, response: Response<Weather>) {
-                if (response.isSuccessful) {
-                    val tempKelvin = response.body()?.main?.temp
+            main.enqueue(object : Callback<Weather> {
+                override fun onResponse(call: Call<Weather>, response: Response<Weather>) {
+                    if (response.isSuccessful) {
+                        val tempKelvin = response.body()?.main?.temp
 
-                    if (tempKelvin == null || tempKelvin < 0) {
-                        Log.e(
-                            TAG,
-                            "Error detected while retrieving results from API: " +
+                        if (tempKelvin == null || tempKelvin < 0) {
+                            Log.e(
+                                TAG,
+                                "Error detected while retrieving results from API: " +
                                     OPEN_WEATHER_BASE_URL
-                        )
-                        Toast.makeText(
-                            requireContext(),
-                            "Error detected while retrieving results from API",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        return
+                            )
+                            Toast.makeText(
+                                requireContext(),
+                                "Error detected while retrieving results from API",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return
+                        }
+
+                        val temp =
+                            BigDecimal(tempKelvin.minus(DIFF_KELVIN_CELSIUS).toString()).setScale(
+                                2, RoundingMode.HALF_UP
+                            ).toFloat()
+                        networkResponse.postValue(temp)
+                    } else {
+                        Log.e(TAG, response.message())
+                        Toast.makeText(requireContext(), "City not found", Toast.LENGTH_LONG).show()
                     }
-
-                    val temp =
-                        BigDecimal(tempKelvin.minus(DIFF_KELVIN_CELSIUS).toString()).setScale(
-                            2, RoundingMode.HALF_UP
-                        ).toFloat()
-                    networkResponse.postValue(temp)
-                } else {
-                    Toast.makeText(requireContext(), "City not found", Toast.LENGTH_LONG).show()
                 }
-            }
 
-            override fun onFailure(call: Call<Weather>, t: Throwable) {
-                Toast.makeText(requireContext(), "${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
+                override fun onFailure(call: Call<Weather>, t: Throwable) {
+                    Toast.makeText(requireContext(), "${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
 
     override fun onViewCreated(view: View, @Nullable savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -318,7 +354,7 @@ class DashcamFragment : Fragment() {
                 activeRecording?.stop()
                 startRecording()
             } else {
-                throw Exception("Unexpected state of recording")
+                throw UnexpectedStateException("Unexpected state of recording")
             }
         }
     }
