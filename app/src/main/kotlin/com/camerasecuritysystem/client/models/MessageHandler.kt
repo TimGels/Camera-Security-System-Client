@@ -1,22 +1,22 @@
 package com.camerasecuritysystem.client.models
 
-class MessageHandler {
+import android.util.Log
 
-    companion object {
-        @JvmStatic suspend fun handleMessage(message: Message, serverConnection: ServerConnection) {
+object MessageHandler {
+    private const val tag = "MessageHandler"
 
-            when (message.type) {
-                MessageType.FOOTAGE_REQUEST_ALL -> {
-                    serverConnection.sendMessage( Message(
+    suspend fun handleMessage(message: Message, serverConnection: ServerConnection) {
+        when (message.type) {
+            MessageType.FOOTAGE_REQUEST_ALL -> {
+                // Get all footage and send the response
+                serverConnection.sendMessage(
+                    Message(
                         type = MessageType.FOOTAGE_RESPONSE_ALL,
                         footage = FootageHandler.getAllFootage()
-                    ))
-                }
-                MessageType.DOWNLOAD_REQUEST -> {
-
-                }
+                    )
+                )
             }
+            else -> Log.d(tag, "Not handling incoming message of type ${message.type}!")
         }
     }
-
 }
