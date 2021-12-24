@@ -15,23 +15,6 @@
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal">
 
-<!--        <TextView-->
-<!--            android:backgroundTint="@color/white"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:textColor="@color/black"-->
-<!--            android:theme="@style/Theme.MaterialComponents"-->
-
-<!--            android:textAlignment="textStart"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="16dp"-->
-<!--            android:paddingBottom="24dp"-->
-<!--            android:paddingTop="24dp"-->
-<!--            android:text="@string/tap_to_edit_connection_settings"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            tools:layout_editor_absoluteX="0dp" />-->
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/textViewConnectionSettings"
             android:layout_width="wrap_content"
