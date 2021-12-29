@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.camerasecuritysystem.client.databinding.FragmentDashcamBinding
+import com.camerasecuritysystem.client.mailjet.MailSender
 import com.camerasecuritysystem.client.models.IWeatherAPIService
 import com.camerasecuritysystem.client.models.Weather
 import kotlinx.coroutines.CoroutineScope
@@ -226,6 +227,7 @@ class DashcamFragment : Fragment() {
         if (recording != null) {
             Log.i(TAG, "Stopped recording")
             recording.stop()
+            MailSender(requireContext()).sendEmail()
             activeRecording = null
         }
         binding!!.captureButton.setImageResource(R.drawable.ic_start)

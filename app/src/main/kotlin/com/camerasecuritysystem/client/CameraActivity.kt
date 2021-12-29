@@ -1,21 +1,18 @@
 package com.camerasecuritysystem.client
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.camerasecuritysystem.client.databinding.ActivityCameraBinding
 import com.camerasecuritysystem.client.models.CameraMode
 
 class CameraActivity : AppCompatActivity() {
 
-    private var _binding: ActivityCameraBinding? = null
-    private val binding get() = _binding!!
-
     private val TAG = "CameraActivity"
 
-    private lateinit var mode : CameraMode
+    private lateinit var mode: CameraMode
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +23,7 @@ class CameraActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate: started")
     }
 
+    @SuppressLint("SetTextI18n")
     fun getIncomingIntent() {
         Log.d(TAG, "getIncomingIntent: checking incoming intents")
 
@@ -35,16 +33,18 @@ class CameraActivity : AppCompatActivity() {
 
             this.mode = mode
 
-            val textView: TextView = findViewById(R.id.modeText)
-            textView.text = mode.toString()
+            if (mode !== CameraMode.DASHCAM) {
+                val textView: TextView = findViewById(R.id.modeText)
+                textView.text = "$mode coming soon..."
+            }
         }
     }
 
     fun getMode(intent: Intent): CameraMode? {
         if (intent.hasExtra("modus")) {
-            var extras = intent.extras
+            val extras = intent.extras
             if ((extras != null) && (extras.containsKey("modus"))) {
-                var modus: CameraMode = extras.getSerializable("modus") as CameraMode;
+                val modus: CameraMode = extras.getSerializable("modus") as CameraMode
                 return modus
             }
         }
@@ -54,13 +54,15 @@ class CameraActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        //TODO Maak hier een if van
-        when(mode){
-            CameraMode.DASHCAM ->{
+        when (mode) {
+            CameraMode.DASHCAM -> {
                 val transaction = supportFragmentManager.beginTransaction()
-
-                transaction.add(R.id.fragmentContainerView, DashcamFragment(), "DashcamFragment").commitAllowingStateLoss()
+                transaction.add(
+                    R.id.fragmentContainerView, DashcamFragment(),
+                    "DashcamFragment"
+                ).commitAllowingStateLoss()
             }
+            else -> Log.e(TAG, "Mode not yet implemented")
         }
     }
 }

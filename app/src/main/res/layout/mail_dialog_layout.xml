@@ -48,7 +48,7 @@
         android:hint="@string/api_secret"
         app:errorEnabled="true"
         app:errorIconDrawable="@null"
-        app:layout_constraintBottom_toTopOf="@+id/email_layout"
+        app:layout_constraintBottom_toTopOf="@+id/from_email_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/api_key_layout"
@@ -64,12 +64,12 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/email_layout"
+        android:id="@+id/from_email_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
         android:layout_marginTop="16dp"
-        android:hint="@string/e_mail_address"
+        android:hint="@string/from_e_mail_address"
         app:errorEnabled="true"
         app:errorIconDrawable="@null"
         app:layout_constraintEnd_toEndOf="parent"
@@ -78,7 +78,28 @@
         app:passwordToggleEnabled="false">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/email_text"
+            android:id="@+id/from_email_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textEmailAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/to_email_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="16dp"
+        android:hint="@string/to_e_mail_address"
+        app:errorEnabled="true"
+        app:errorIconDrawable="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/from_email_layout"
+        app:passwordToggleEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/to_email_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textEmailAddress" />

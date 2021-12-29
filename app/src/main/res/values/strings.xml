@@ -12,7 +12,8 @@
     <string name="camera_id">camera_id</string>
     <string name="mail_key">mail_key</string>
     <string name="mail_secret">mail_secret</string>
-    <string name="email">email</string>
+    <string name="fromEmail">fromEmail</string>
+    <string name="toEmail">toEmail</string>
     <string name="mailKeyIVByte">mailKeyIVByte</string>
     <string name="secretIVByte">secretIVByte</string>
 
@@ -61,7 +62,8 @@
     <string name="mail_key_string">API Key</string>
     <string name="mail_secret_string">API Secret</string>
     <string name="mail_email_string">E-mail address</string>
-    <string name="e_mail_address">E-mail address</string>
+    <string name="from_e_mail_address">Registered MailJet e-mail</string>
+    <string name="to_e_mail_address">Send e-mails to…</string>
 
     <!-- Weather API-->
     <string name="weather_api_explanation">To use the weather API, get your API key at https://openweathermap.org/api</string>

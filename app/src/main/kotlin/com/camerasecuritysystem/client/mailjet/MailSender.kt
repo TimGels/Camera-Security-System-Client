@@ -2,13 +2,20 @@ package com.camerasecuritysystem.client.mailjet
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.camerasecuritysystem.client.KeyStoreHelper
 import com.camerasecuritysystem.client.R
+import com.camerasecuritysystem.client.models.DoesNetworkHaveInternet
 import com.mailjet.client.ClientOptions
 import com.mailjet.client.MailjetClient
 import com.mailjet.client.MailjetRequest
 import com.mailjet.client.MailjetResponse
 import com.mailjet.client.resource.Emailv31
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -38,7 +45,7 @@ class MailSender(val context: Context) {
                         .put(
                             Emailv31.Message.FROM,
                             JSONObject()
-                                .put("Email", "jochembrans@gmail.com")
+                                .put("Email", getFromEmail())
                                 .put("Name", "CameraSecuritySystem")
                         )
                         .put(
@@ -46,31 +53,44 @@ class MailSender(val context: Context) {
                             JSONArray()
                                 .put(
                                     JSONObject()
-                                        .put("Email", getEmail())
+                                        .put("Email", getToEmail())
                                         .put("Name", "CSS user")
                                 )
                         )
-                        .put(Emailv31.Message.SUBJECT, "About your camera.")
-                        .put(Emailv31.Message.TEXTPART, "My first Mailjet email")
+                        .put(Emailv31.Message.SUBJECT, "About your camera recording.")
+                        .put(Emailv31.Message.TEXTPART, "New recording")
                         .put(
                             Emailv31.Message.HTMLPART,
-                            "<h3>A notification about your camera</h3><br />This is a test email"
+                            """<h3>A new recording has been saved on your device.</h3><br />
+                                Device: ${android.os.Build.DEVICE}<br/>
+                                Model: ${android.os.Build.MODEL}<br/>
+                                Brand: ${android.os.Build.BRAND}<br/>
+                            """.trimMargin()
                         )
                         .put(Emailv31.Message.CUSTOMID, "AppGettingStartedTest")
                 )
         )
 
-    private fun getEmail(): String? {
-        return sharedPreferences.getString(context.resources.getString(R.string.email), null)
+    private fun getToEmail(): String? {
+        return sharedPreferences.getString(context.resources.getString(R.string.toEmail), null)
+    }
+
+    private fun getFromEmail(): String? {
+        return sharedPreferences.getString(context.resources.getString(R.string.fromEmail), null)
     }
 
     fun sendEmail() {
         try {
-            response = client?.post(request)
-            Log.e("MAIL", response?.status.toString())
-            Log.e("MAIL", response?.data.toString())
+            if (getKey() !== null && getSecret() !== null && getFromEmail() !== null && getToEmail() !== null) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    response = client?.post(request)
+                    Log.e("MAIL", response?.status.toString())
+                    Log.e("MAIL", response?.data.toString())
+                }
+            }
         } catch (e: Exception) {
             Log.e("MAIL EXC", e.toString())
+            Toast.makeText(context, "MailJet not configured correctly", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -80,10 +100,13 @@ class MailSender(val context: Context) {
         val keyEnc =
             sharedPreferences.getString(context.resources.getString(R.string.mail_key), null)
 
-        return keyStoreHelper.decryptData(
-            keyBytes!!.toByteArray(Charsets.ISO_8859_1),
-            keyEnc!!.toByteArray(Charsets.ISO_8859_1)
-        )
+        if (keyBytes !== null && keyEnc !== null) {
+            return keyStoreHelper.decryptData(
+                keyBytes.toByteArray(Charsets.ISO_8859_1),
+                keyEnc.toByteArray(Charsets.ISO_8859_1)
+            )
+        }
+        return null
     }
 
     private fun getSecret(): String? {
@@ -92,9 +115,12 @@ class MailSender(val context: Context) {
         val secretEnc =
             sharedPreferences.getString(context.resources.getString(R.string.mail_secret), null)
 
-        return keyStoreHelper.decryptData(
-            secretBytes!!.toByteArray(Charsets.ISO_8859_1),
-            secretEnc!!.toByteArray(Charsets.ISO_8859_1)
-        )
+        if (secretBytes !== null && secretEnc !== null) {
+            return keyStoreHelper.decryptData(
+                secretBytes.toByteArray(Charsets.ISO_8859_1),
+                secretEnc.toByteArray(Charsets.ISO_8859_1)
+            )
+        }
+        return null
     }
 }
