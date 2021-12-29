@@ -55,21 +55,17 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
                         intent = Intent(itemView.context, CameraActivity::class.java)
                         intent.putExtra("modus", CameraMode.IPCAMERA)
                         itemView.context.startActivity(intent)
-                        makeText(itemView.context, adapterPosition.toString(), LENGTH_SHORT).show()
                     }
                     2 -> {
                         intent = Intent(itemView.context, CameraActivity::class.java)
                         intent.putExtra("modus", CameraMode.MOTIONCAMERA)
                         itemView.context.startActivity(intent)
-                        makeText(itemView.context, adapterPosition.toString(), LENGTH_SHORT).show()
                     }
                     else -> {
                         makeText(itemView.context, "The page could not be loaded.", LENGTH_SHORT).show()
-
                     }
                 }
             }
-
         }
     }
 }

@@ -11,6 +11,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.widget.doOnTextChanged
 import com.camerasecuritysystem.client.databinding.MailDialogLayoutBinding
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import java.lang.Exception
 import java.lang.NumberFormatException
 import java.util.regex.Pattern
@@ -31,7 +33,8 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
 
     private var keyValid: Boolean = false
     private var secretValid: Boolean = false
-    private var emailValid: Boolean = false
+    private var fromEmailValid: Boolean = false
+    private var toEmailValid: Boolean = false
 
     private var okButton: Button? = null
 
@@ -47,7 +50,8 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
         // Get the id of the input fields
         val editTextKey = binding.apiKeyText
         val editTextSecret = binding.apiSecretText
-        val editTextEmail = binding.emailText
+        val editTextFromEmail = binding.fromEmailText
+        val editTextToEmail = binding.toEmailText
 
         // Input field strings
         this.keyString = resources.getString(R.string.mail_key_string)
@@ -65,8 +69,10 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
             sharedPreferences.getString(resources.getString(R.string.mail_key), null)
         val apiSecretEnc =
             sharedPreferences.getString(resources.getString(R.string.mail_secret), null)
-        val email =
-            sharedPreferences.getString(resources.getString(R.string.email), null)
+        val fromEmail =
+            sharedPreferences.getString(resources.getString(R.string.fromEmail), null)
+        val toEmail =
+            sharedPreferences.getString(resources.getString(R.string.toEmail), null)
 
         val ivByteKey =
             sharedPreferences.getString(resources.getString(R.string.mailKeyIVByte), null)
@@ -109,7 +115,8 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
         }
 
         // Set the email text
-        editTextEmail.setText(email)
+        editTextFromEmail.setText(fromEmail)
+        editTextToEmail.setText(toEmail)
 
         // Create the dialog window
         val dialog = AlertDialog.Builder(requireActivity())
@@ -122,10 +129,11 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
                 // since the OK button is disabled until they are valid.
                 val keyText = editTextKey.text.toString()
                 val secretText = editTextSecret.text.toString()
-                val emailText = editTextEmail.text.toString()
+                val fromEmailText = editTextFromEmail.text.toString()
+                val toEmailText = editTextToEmail.text.toString()
 
                 // Pass the new input values to store them in the shared preferences
-                listener!!.applyTexts(keyText, secretText, emailText)
+                listener!!.applyEmailTexts(keyText, secretText, fromEmailText, toEmailText)
             }
             .create()
 
@@ -133,11 +141,20 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
             this.okButton = (it as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE)
 
             // Set the initial values for the input fields and update the OK button
-            if (email != null) {
-                binding.emailText.setText(email)
-                emailValid = true
+            if (fromEmail != null) {
+                binding.fromEmailText.setText(fromEmail)
+                fromEmailValid = true
             } else {
-                binding.emailLayout.error =
+                binding.fromEmailLayout.error =
+                    String.format(resources.getString(R.string.err_not_empty), emailString)
+                setOkButton(okButton)
+            }
+
+            if (toEmail != null) {
+                binding.toEmailText.setText(toEmail)
+                toEmailValid = true
+            } else {
+                binding.toEmailLayout.error =
                     String.format(resources.getString(R.string.err_not_empty), emailString)
                 setOkButton(okButton)
             }
@@ -176,8 +193,8 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
                     )
 
                     // Set the password text in the input field
-                    editTextKey.setText(secretText)
-                    keyValid = true
+                    editTextSecret.setText(secretText)
+                    secretValid = true
                 } catch (e: Exception) {
                     Log.e("EXCEPTION", "error: ", e)
                     setOkButton(okButton)
@@ -197,8 +214,12 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
                 secretValid = validateSecret(text.toString())
                 setOkButton(okButton)
             }
-            binding.emailText.doOnTextChanged { text, _, _, _ ->
-                emailValid = validateEmail(text.toString())
+            binding.fromEmailText.doOnTextChanged { text, _, _, _ ->
+                fromEmailValid = validateEmail(text.toString(), binding.fromEmailLayout)
+                setOkButton(okButton)
+            }
+            binding.toEmailText.doOnTextChanged { text, _, _, _ ->
+                toEmailValid = validateEmail(text.toString(), binding.toEmailLayout)
                 setOkButton(okButton)
             }
         }
@@ -282,8 +303,8 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
     }
 
     @Suppress("ReturnCount")
-    private fun validateEmail(email: String): Boolean {
-        val layout = binding.emailLayout
+    private fun validateEmail(email: String, layoutBinding: TextInputLayout): Boolean {
+        val layout = layoutBinding
 
         if (email.isEmpty()) {
             layout.error = String.format(resources.getString(R.string.err_not_empty), emailString)
@@ -305,7 +326,7 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
     }
 
     private fun setOkButton(okButton: Button?) {
-        okButton?.isEnabled = (keyValid && secretValid && emailValid)
+        okButton?.isEnabled = (keyValid && secretValid && fromEmailValid && toEmailValid)
     }
 
     /**
@@ -322,6 +343,6 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
     }
 
     interface MailDialogListener {
-        fun applyTexts(apiKey: String, apiSecret: String, email: String)
+        fun applyEmailTexts(apiKey: String, apiSecret: String, fromEmail: String, toEmail: String)
     }
 }
