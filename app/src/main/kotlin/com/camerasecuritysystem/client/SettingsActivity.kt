@@ -296,7 +296,12 @@ class SettingsActivity : AppCompatActivity(),
             .apply()
     }
 
-    override fun applyEmailTexts(apiKey: String, apiSecret: String, fromEmail: String, toEmail: String) {
+    override fun applyEmailTexts(
+        apiKey: String,
+        apiSecret: String,
+        fromEmail: String,
+        toEmail: String
+    ) {
         // Encrypt the key
         val pairKey = keyStoreMail.encryptData(apiKey)
 
@@ -324,8 +329,12 @@ class SettingsActivity : AppCompatActivity(),
             pairSecret.second.toString(Charsets.ISO_8859_1)
         ).apply()
 
-        sharedPreferences.edit().putString(resources.getString(R.string.fromEmail), fromEmail).apply()
-        sharedPreferences.edit().putString(resources.getString(R.string.toEmail), toEmail).apply()
+        sharedPreferences.edit()
+            .putString(resources.getString(R.string.fromEmail), fromEmail)
+            .apply()
+        sharedPreferences.edit()
+            .putString(resources.getString(R.string.toEmail), toEmail)
+            .apply()
     }
 
     override fun applyTexts(apiKey: String, city: String) {
