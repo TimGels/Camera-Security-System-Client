@@ -3,10 +3,8 @@ package com.camerasecuritysystem.client.mailjet
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.camerasecuritysystem.client.KeyStoreHelper
 import com.camerasecuritysystem.client.R
-import com.camerasecuritysystem.client.models.DoesNetworkHaveInternet
 import com.mailjet.client.ClientOptions
 import com.mailjet.client.MailjetClient
 import com.mailjet.client.MailjetRequest
@@ -15,7 +13,6 @@ import com.mailjet.client.resource.Emailv31
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -81,7 +78,11 @@ class MailSender(val context: Context) {
 
     fun sendEmail() {
         try {
-            if (getKey() !== null && getSecret() !== null && getFromEmail() !== null && getToEmail() !== null) {
+            if (getKey() !== null &&
+                getSecret() !== null &&
+                getFromEmail() !== null &&
+                getToEmail() !== null
+            ) {
                 CoroutineScope(Dispatchers.IO).launch {
                     response = client?.post(request)
                     Log.e("MAIL", response?.status.toString())
