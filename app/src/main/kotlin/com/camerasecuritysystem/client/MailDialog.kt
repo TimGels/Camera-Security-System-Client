@@ -11,10 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.widget.doOnTextChanged
 import com.camerasecuritysystem.client.databinding.MailDialogLayoutBinding
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import java.lang.Exception
-import java.lang.NumberFormatException
 import java.util.regex.Pattern
 
 const val KEY_LENGTH_MAIL = 32
@@ -43,6 +40,7 @@ class MailDialog(context: Context) : AppCompatDialogFragment() {
     private lateinit var secretString: String
     private lateinit var emailString: String
 
+    @Suppress("ComplexMethod")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = requireActivity().layoutInflater
         binding = MailDialogLayoutBinding.inflate(inflater)
