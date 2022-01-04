@@ -35,7 +35,7 @@ class CameraActivity : AppCompatActivity() {
 
             if (mode !== CameraMode.DASHCAM) {
                 val textView: TextView = findViewById(R.id.modeText)
-                textView.text = "$mode coming soon..."
+                textView.text = String.format(resources.getString(R.string.coming_soon), mode)
             }
         }
     }
